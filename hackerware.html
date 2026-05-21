@@ -1,0 +1,2349 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>HackerWare - Cyber Safety Micro Games</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet">
+<style>
+/* =========================================================
+   HACKERWARE - PIXEL ART CYBERSECURITY MICRO-GAMES
+   Color Palette (Vibrant Neon Arcade):
+     --bg-deep:    #0d0221   deep purple-black
+     --bg-mid:     #241734   purple shadow
+     --neon-pink:  #ff2975   hot pink
+     --neon-cyan:  #00f0ff   cyan
+     --neon-yellow:#f7ff00   electric yellow
+     --neon-green: #39ff14   lime green
+     --neon-orange:#ff9f1c   orange
+     --neon-red:   #ff124f   red
+     --text-light: #ffffff   white
+   ========================================================= */
+:root {
+  --bg-deep:     #0d0221;
+  --bg-mid:      #241734;
+  --neon-pink:   #ff2975;
+  --neon-cyan:   #00f0ff;
+  --neon-yellow: #f7ff00;
+  --neon-green:  #39ff14;
+  --neon-orange: #ff9f1c;
+  --neon-red:    #ff124f;
+  --text-light:  #ffffff;
+  --text-dark:   #0d0221;
+  /* White-theme additions: page background + readable ink */
+  --page-bg:     #ffffff;
+  --surface:     #ffffff;
+  --surface-alt: #f4f6fa;
+  --ink:         #1a1a2e;
+  --ink-soft:    #4b5067;
+  /* Title palette (white-theme) */
+  --title-1:     #0066ff; /* electric blue primary */
+  --title-2:     #ff6b00; /* vivid orange shadow */
+  --title-3:     #0d0221; /* dark depth */
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body {
+  width: 100%; height: 100%;
+  background: var(--page-bg);
+  font-family: 'Press Start 2P', monospace;
+  color: var(--ink);
+  overflow: hidden;
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
+  user-select: none;
+  cursor: default;
+}
+body {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  /* Scrolling pixel grid background on white */
+  background-color: var(--page-bg);
+  background-image:
+    linear-gradient(rgba(255,41,117,0.10) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0,102,255,0.10) 1px, transparent 1px);
+  background-size: 32px 32px;
+  background-position: 0 0;
+  animation: gridScroll 6s linear infinite;
+}
+@keyframes gridScroll {
+  from { background-position: 0 0, 0 0; }
+  to   { background-position: 32px 32px, 32px 32px; }
+}
+
+/* ===== Stage (virtual 960x600 scales to fit) ===== */
+#stage {
+  position: relative;
+  width: 960px;
+  height: 600px;
+  max-width: 100vw;
+  max-height: 100vh;
+  background: var(--surface);
+  border: 6px solid var(--neon-cyan);
+  box-shadow:
+    0 0 0 6px var(--surface),
+    0 0 0 10px var(--neon-pink),
+    0 0 40px rgba(255,41,117,0.4),
+    inset 0 0 60px rgba(0,240,255,0.08);
+  overflow: hidden;
+  transform-origin: center center;
+}
+
+/* ===== HUD ===== */
+#hud {
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 56px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 18px;
+  background: linear-gradient(180deg, var(--surface), var(--surface-alt));
+  border-bottom: 4px solid var(--neon-pink);
+  z-index: 50;
+  font-size: 12px;
+  pointer-events: none;
+  color: var(--ink);
+}
+#hud.hidden { display: none; }
+#lives { display: flex; gap: 18px; align-items: center; padding-left: 8px; }
+.heart {
+  width: 22px; height: 22px;
+  background: var(--neon-red);
+  position: relative;
+  display: inline-block;
+  transform: rotate(-45deg);
+  margin: 11px 11px 0 11px;
+  box-shadow: 0 0 6px var(--neon-red);
+  transition: opacity 0.3s, transform 0.3s;
+}
+.heart::before, .heart::after {
+  content: '';
+  position: absolute;
+  width: 22px; height: 22px;
+  background: var(--neon-red);
+  border-radius: 50%;
+}
+.heart::before { top: -11px; left: 0; }
+.heart::after  { left: 11px; top: 0; }
+.heart.lost { opacity: 0.15; background: #444; box-shadow: none; }
+.heart.lost::before, .heart.lost::after { background: #444; }
+#timer-wrap { flex: 1; margin: 0 24px; }
+#timer-label { font-size: 9px; color: var(--ink); margin-bottom: 4px; text-align: center; }
+#timer-bar-bg {
+  width: 100%; height: 14px;
+  background: var(--surface-alt);
+  border: 2px solid var(--neon-cyan);
+  position: relative;
+  overflow: hidden;
+}
+#timer-bar {
+  height: 100%;
+  background: linear-gradient(90deg, var(--neon-green), var(--neon-yellow), var(--neon-orange), var(--neon-red));
+  width: 100%;
+  transition: width 0.2s linear;
+}
+#round-label { font-size: 10px; color: #0066b8; min-width: 90px; text-align: right; }
+
+/* ===== Screens ===== */
+.screen {
+  position: absolute;
+  inset: 0;
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 40px;
+}
+.screen.active { display: flex; }
+
+/* ===== Start Screen ===== */
+#screen-start h1 {
+  font-size: 56px;
+  color: var(--title-1);
+  text-shadow:
+    4px 4px 0 var(--title-2),
+    8px 8px 0 var(--title-3),
+    0 0 30px rgba(0,102,255,0.35);
+  letter-spacing: 4px;
+  margin-bottom: 12px;
+  animation: titleBounce 1.6s ease-in-out infinite;
+}
+@keyframes titleBounce {
+  0%,100% { transform: translateY(0) rotate(-1deg); }
+  50%     { transform: translateY(-10px) rotate(1deg); }
+}
+#screen-start .subtitle {
+  font-size: 14px;
+  color: var(--neon-pink);
+  margin-bottom: 36px;
+  letter-spacing: 2px;
+}
+#screen-start .lives-preview {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 36px;
+}
+#screen-start .lives-preview .heart { width: 30px; height: 30px; }
+#screen-start .lives-preview .heart::before,
+#screen-start .lives-preview .heart::after { width: 30px; height: 30px; }
+#screen-start .lives-preview .heart::before { top: -15px; left: 0; }
+#screen-start .lives-preview .heart::after  { left: 15px; top: 0; }
+#screen-start .hint {
+  margin-top: 30px;
+  font-family: 'VT323', monospace;
+  font-size: 22px;
+  color: var(--ink);
+  max-width: 640px;
+  line-height: 1.4;
+}
+/* Language selector */
+#lang-wrapper {
+  position: absolute;
+  bottom: 20px;
+  left: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+#lang-selector {
+  display: flex;
+  gap: 16px;
+}
+.lang-btn {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 12px;
+  color: var(--ink);
+  background: var(--surface);
+  border: 3px solid var(--neon-cyan);
+  padding: 10px 18px;
+  cursor: pointer;
+  letter-spacing: 2px;
+  transition: all 0.12s;
+}
+.lang-btn:hover { background: rgba(0,240,255,0.15); }
+.lang-btn.active {
+  background: var(--neon-cyan);
+  color: var(--text-dark);
+  box-shadow: 0 0 16px rgba(0,240,255,0.6);
+}
+
+
+/* ===== Pixel Button ===== */
+.pixel-btn {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 20px;
+  color: var(--text-dark);
+  background: var(--neon-yellow);
+  border: none;
+  padding: 18px 36px;
+  cursor: pointer;
+  position: relative;
+  box-shadow:
+    6px 6px 0 var(--bg-deep),
+    6px 6px 0 6px var(--neon-pink);
+  transition: transform 0.08s ease-out, box-shadow 0.08s ease-out;
+  letter-spacing: 2px;
+}
+.pixel-btn:hover {
+  transform: translate(-2px, -2px);
+  box-shadow:
+    8px 8px 0 var(--bg-deep),
+    8px 8px 0 6px var(--neon-pink);
+}
+.pixel-btn:active {
+  transform: translate(4px, 4px);
+  box-shadow:
+    2px 2px 0 var(--bg-deep),
+    2px 2px 0 6px var(--neon-pink);
+}
+.pixel-btn.cyan { background: var(--neon-cyan); }
+.pixel-btn.green { background: var(--neon-green); }
+
+/* ===== Intro Screen (mini-game prompt) ===== */
+#screen-intro {
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: stretch;
+  padding: 80px 40px 30px;
+  background: var(--surface);
+}
+.intro-top {
+  text-align: center;
+  padding-bottom: 22px;
+  border-bottom: 4px solid var(--neon-cyan);
+}
+.intro-bottom {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding-top: 26px;
+}
+#screen-intro .prompt {
+  font-size: 36px;
+  color: var(--neon-pink);
+  text-shadow: 3px 3px 0 var(--neon-yellow), 6px 6px 0 var(--title-3);
+  letter-spacing: 3px;
+  animation: promptPulse 0.5s ease-in-out infinite alternate;
+  padding: 0 20px;
+}
+@keyframes promptPulse {
+  from { transform: scale(1); }
+  to   { transform: scale(1.04); }
+}
+#screen-intro .topic {
+  margin-top: 14px;
+  font-size: 12px;
+  color: var(--title-1);
+  letter-spacing: 2px;
+}
+#screen-intro .description {
+  margin-top: 16px;
+  font-family: 'VT323', monospace;
+  font-size: 22px;
+  color: var(--ink);
+  line-height: 1.3;
+  max-width: 760px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* ===== Tutorial micro-demos (looping pixel-art) ===== */
+.demo {
+  position: relative;
+  width: 380px;
+  height: 170px;
+  background: var(--surface-alt);
+  border: 3px solid var(--title-1);
+  border-radius: 6px;
+  overflow: hidden;
+  box-shadow: 5px 5px 0 var(--neon-pink);
+}
+.demo-cursor {
+  position: absolute;
+  width: 28px; height: 28px;
+  z-index: 10;
+  pointer-events: none;
+}
+.demo-scissors-cursor { width: 32px; height: 32px; }
+
+/* SVG mouse-cursor pixel art (used as ::before bg) */
+.demo-cursor svg, .demo-scissors-cursor svg { width: 100%; height: 100%; display: block; }
+
+/* ---- Demo 1: Password Puzzle: hand drags a piece into a slot ---- */
+.demo-password .d-slot {
+  position: absolute; top: 60px; left: 250px;
+  width: 56px; height: 56px;
+  border: 3px dashed var(--neon-cyan);
+  background: rgba(0,240,255,0.08);
+  border-radius: 4px;
+}
+.demo-password .d-piece {
+  position: absolute; top: 60px; left: 60px;
+  width: 56px; height: 56px;
+  background: var(--neon-green);
+  color: var(--text-dark);
+  font-family: 'Press Start 2P', monospace;
+  font-size: 22px;
+  display: flex; align-items: center; justify-content: center;
+  border: 3px solid var(--title-3);
+  box-shadow: 3px 3px 0 var(--title-3);
+  animation: dPiece 2.4s ease-in-out infinite;
+}
+.demo-password .demo-cursor {
+  top: 80px; left: 88px;
+  animation: dCursorPw 2.4s ease-in-out infinite;
+}
+@keyframes dPiece {
+  0%       { transform: translate(0,0); }
+  20%      { transform: translate(0,0); }
+  60%      { transform: translate(190px,0); }
+  80%      { transform: translate(190px,0); }
+  100%     { transform: translate(0,0); }
+}
+@keyframes dCursorPw {
+  0%       { transform: translate(0,0) scale(1); }
+  15%      { transform: translate(0,0) scale(1); }
+  20%      { transform: translate(0,0) scale(0.85); } /* "grab" */
+  60%      { transform: translate(190px,0) scale(0.85); }
+  70%      { transform: translate(190px,0) scale(1); } /* "release" */
+  100%     { transform: translate(0,0) scale(1); }
+}
+
+/* ---- Demo 2: Meme Shield: bubble falls, hand clicks it ---- */
+.demo-meme .d-bubble {
+  position: absolute;
+  left: 150px; top: -40px;
+  min-width: 80px;
+  padding: 6px 10px;
+  background: var(--neon-red);
+  color: var(--text-light);
+  border: 3px solid var(--title-3);
+  font-family: 'VT323', monospace;
+  font-size: 16px;
+  text-align: center;
+  box-shadow: 3px 3px 0 var(--title-3);
+  animation: dBubble 2.4s ease-in-out infinite;
+}
+.demo-meme .demo-cursor {
+  top: 60px; left: 250px;
+  animation: dCursorMeme 2.4s ease-in-out infinite;
+}
+@keyframes dBubble {
+  0%       { top: -40px; opacity: 1; transform: scale(1); }
+  40%      { top: 50px;  opacity: 1; transform: scale(1); }
+  60%      { top: 60px;  opacity: 1; transform: scale(1); }
+  70%      { top: 60px;  transform: scale(0.2); opacity: 0; }
+  100%     { top: 60px;  opacity: 0; transform: scale(0.2); }
+}
+@keyframes dCursorMeme {
+  0%       { left: 250px; top: 60px; transform: scale(1); }
+  40%      { left: 180px; top: 70px; transform: scale(1); }
+  60%      { left: 180px; top: 70px; transform: scale(0.8); } /* click */
+  75%      { left: 180px; top: 70px; transform: scale(1); }
+  100%     { left: 250px; top: 60px; transform: scale(1); }
+}
+
+/* ---- Demo 3: Fake News: drag alert to trash ---- */
+.demo-fakenews .d-alert {
+  position: absolute; top: 60px; left: 30px;
+  width: 100px; padding: 6px 8px;
+  background: var(--neon-orange);
+  color: var(--text-dark);
+  border: 3px solid var(--neon-red);
+  font-family: 'VT323', monospace;
+  font-size: 13px;
+  line-height: 1.1;
+  text-align: center;
+  box-shadow: 3px 3px 0 var(--title-3);
+  animation: dDrag 2.6s ease-in-out infinite;
+}
+.demo-fakenews .d-bin {
+  position: absolute; top: 50px; right: 30px;
+  width: 60px; height: 70px;
+  border: 3px solid var(--neon-red);
+  background: var(--surface);
+  color: var(--neon-red);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 32px;
+}
+.demo-fakenews .demo-cursor {
+  top: 70px; left: 70px;
+  animation: dCursorDrag 2.6s ease-in-out infinite;
+}
+@keyframes dDrag {
+  0%   { transform: translate(0,0); opacity: 1; }
+  20%  { transform: translate(0,0); }
+  70%  { transform: translate(190px, -10px); opacity: 1; }
+  80%  { transform: translate(190px, -10px) scale(0.2); opacity: 0; }
+  100% { transform: translate(0,0); opacity: 0; }
+}
+@keyframes dCursorDrag {
+  0%   { transform: translate(0,0) scale(1); }
+  15%  { transform: translate(0,0) scale(1); }
+  20%  { transform: translate(0,0) scale(0.85); } /* grab */
+  70%  { transform: translate(190px, -10px) scale(0.85); }
+  78%  { transform: translate(190px, -10px) scale(1); } /* release */
+  100% { transform: translate(0,0) scale(1); }
+}
+
+/* ---- Demo 4: Inbox: drag email card to trash ---- */
+.demo-inbox .d-email {
+  position: absolute; top: 50px; left: 30px;
+  width: 100px; padding: 6px 8px;
+  background: var(--neon-yellow);
+  color: var(--text-dark);
+  border: 3px solid var(--title-3);
+  font-family: 'VT323', monospace;
+  font-size: 13px;
+  text-align: center;
+  box-shadow: 3px 3px 0 var(--title-3);
+  animation: dDrag 2.6s ease-in-out infinite;
+}
+.demo-inbox .d-trash {
+  position: absolute; top: 50px; right: 30px;
+  width: 60px; height: 70px;
+  border: 3px solid var(--neon-red);
+  background: var(--surface);
+  color: var(--neon-red);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 32px;
+}
+.demo-inbox .demo-cursor {
+  top: 60px; left: 70px;
+  animation: dCursorDrag 2.6s ease-in-out infinite;
+}
+
+/* ---- Demo 5: Phishing: scissors cut a line ---- */
+.demo-phish .d-line {
+  position: absolute; top: 10px; left: 50%; transform: translateX(-50%);
+  width: 4px; height: 100px;
+  background: var(--neon-cyan);
+  box-shadow: 0 0 6px var(--neon-cyan);
+}
+.demo-phish .d-bait {
+  position: absolute; top: 110px; left: 50%; transform: translateX(-50%);
+  padding: 6px 12px;
+  background: var(--neon-yellow);
+  color: var(--text-dark);
+  border: 3px solid var(--neon-red);
+  font-family: 'Press Start 2P', monospace;
+  font-size: 9px;
+  animation: dBait 2.4s ease-in-out infinite;
+}
+.demo-phish .demo-scissors-cursor {
+  top: 50px; left: 80px;
+  animation: dScissors 2.4s ease-in-out infinite;
+}
+@keyframes dBait {
+  0%, 65%  { transform: translateX(-50%) translateY(0); opacity: 1; }
+  80%, 100%{ transform: translateX(-50%) translateY(60px) rotate(20deg); opacity: 0; }
+}
+@keyframes dScissors {
+  0%   { left: 80px;  top: 50px; transform: rotate(0deg); }
+  40%  { left: 160px; top: 50px; transform: rotate(0deg); }
+  55%  { left: 160px; top: 50px; transform: rotate(-15deg); } /* snip */
+  70%  { left: 160px; top: 50px; transform: rotate(0deg); }
+  100% { left: 80px;  top: 50px; transform: rotate(0deg); }
+}
+
+/* ===== Feedback Screen ===== */
+#screen-feedback .result {
+  font-size: 48px;
+  letter-spacing: 4px;
+  margin-bottom: 24px;
+  text-shadow: 4px 4px 0 var(--title-3);
+}
+#screen-feedback .result.win  { color: #18a040; }
+#screen-feedback .result.lose { color: var(--neon-red); }
+#screen-feedback .tip-card {
+  background: var(--surface);
+  border: 4px solid var(--neon-cyan);
+  padding: 24px 32px;
+  max-width: 720px;
+  position: relative;
+  box-shadow: 6px 6px 0 var(--neon-pink);
+}
+#screen-feedback .tip-card h3 {
+  font-size: 14px;
+  color: var(--title-1);
+  margin-bottom: 14px;
+  letter-spacing: 2px;
+}
+#screen-feedback .tip-card p {
+  font-family: 'VT323', monospace;
+  font-size: 24px;
+  color: var(--ink);
+  line-height: 1.4;
+}
+#screen-feedback .continue-hint {
+  margin-top: 22px;
+  font-size: 10px;
+  color: var(--neon-cyan);
+  animation: blink 0.8s steps(2) infinite;
+}
+@keyframes blink { 50% { opacity: 0; } }
+
+/* ===== Game Over Screen ===== */
+#screen-gameover h2 {
+  font-size: 52px;
+  color: var(--neon-red);
+  text-shadow: 4px 4px 0 var(--neon-yellow), 8px 8px 0 var(--title-3);
+  letter-spacing: 4px;
+  margin-bottom: 18px;
+  animation: shake 0.4s infinite;
+}
+@keyframes shake {
+  0%,100% { transform: translateX(0); }
+  25% { transform: translateX(-4px); }
+  75% { transform: translateX(4px); }
+}
+#screen-gameover .gameover-sub {
+  font-size: 14px;
+  color: var(--title-1);
+  margin-bottom: 30px;
+}
+#screen-gameover .rounds-summary {
+  font-family: 'VT323', monospace;
+  font-size: 26px;
+  color: var(--ink);
+  margin-bottom: 36px;
+}
+
+/* ===== Review Screen ===== */
+#screen-review {
+  background: #ffffff;
+}
+#screen-review h2 {
+  font-size: 40px;
+  color: var(--title-1);
+  text-shadow: 4px 4px 0 var(--title-2);
+  margin-bottom: 20px;
+}
+#screen-review .review-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 24px;
+  width: 100%;
+  max-width: 600px;
+}
+#screen-review .review-item {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 14px;
+  background: var(--surface-alt);
+  border: 4px solid;
+  padding: 12px;
+  cursor: pointer;
+  box-shadow: 4px 4px 0 var(--title-3);
+  transition: transform 0.1s;
+}
+#screen-review .review-item:active {
+  transform: translate(2px, 2px);
+  box-shadow: 2px 2px 0 var(--title-3);
+}
+#screen-review .review-item.won {
+  color: #22C55E;
+  border-color: #22C55E;
+}
+#screen-review .review-item.lost {
+  color: #EF4444;
+  border-color: #EF4444;
+}
+#screen-review .tip-box {
+  display: none;
+  position: absolute;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  background: var(--surface);
+  border: 4px solid var(--neon-cyan);
+  padding: 36px 24px 24px;
+  min-height: 120px;
+  width: 90%;
+  max-width: 800px;
+  font-family: 'VT323', monospace;
+  font-size: 24px;
+  color: var(--ink);
+  line-height: 1.4;
+  box-shadow: 0 0 0 100vw rgba(255,255,255,0.8), 8px 8px 0 var(--neon-pink);
+  z-index: 1000;
+}
+#screen-review .tip-box.active {
+  display: block;
+}
+.tip-close-btn {
+  position: absolute;
+  top: -4px; right: -4px;
+  background: var(--neon-red);
+  color: var(--text-light);
+  border: 4px solid var(--title-3);
+  width: 36px; height: 36px;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 16px;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer;
+  box-shadow: 4px 4px 0 var(--title-3);
+}
+.tip-close-btn:active {
+  transform: translate(2px, 2px);
+  box-shadow: 2px 2px 0 var(--title-3);
+}
+
+/* ===== Mini-Game Stage ===== */
+#screen-game {
+  padding: 0;
+  display: none;
+}
+#screen-game.active { display: block; }
+#game-area {
+  position: absolute;
+  top: 56px; left: 0; right: 0; bottom: 0;
+  overflow: hidden;
+}
+
+/* ===== Generic draggable styles ===== */
+.draggable {
+  position: absolute;
+  cursor: grab;
+  user-select: none;
+  transition: transform 0.08s;
+}
+.draggable.dragging { cursor: grabbing; z-index: 100; transform: scale(1.06); }
+
+/* ===== Password Puzzle ===== */
+.pw-title { position: absolute; top: 30px; left: 50%; transform: translateX(-50%); font-size: 12px; color: var(--title-1); letter-spacing: 2px; max-width: 880px; text-align: center; line-height: 1.4; }
+.pw-slot-row { position: absolute; top: 120px; left: 50%; transform: translateX(-50%); display: flex; gap: 18px; }
+.pw-slot {
+  width: 88px; height: 88px;
+  border: 4px dashed var(--neon-cyan);
+  background: rgba(0,240,255,0.08);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 12px; color: rgba(255,255,255,0.4);
+}
+.pw-slot.filled { border-style: solid; background: rgba(57,255,20,0.18); border-color: var(--neon-green); }
+.pw-piece {
+  width: 88px; height: 88px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 38px; font-weight: bold;
+  color: var(--text-dark);
+  border: 4px solid var(--bg-deep);
+  box-shadow: 4px 4px 0 var(--bg-deep);
+}
+.pw-piece.placed { box-shadow: 0 0 16px var(--neon-green); }
+
+/* ===== Meme Shield ===== */
+#game-area.meme-mode { cursor: none; }
+/* Fixed instruction header so falling bubbles never overlap the text. */
+.meme-header {
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 70px;
+  background: var(--surface);
+  border-bottom: 4px solid var(--neon-pink);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px 80px;
+  z-index: 5; /* sits above the falling bubbles */
+  text-align: center;
+  font-size: 12px;
+  color: var(--title-1);
+  letter-spacing: 1.5px;
+  line-height: 1.4;
+}
+.meme-bubble {
+  position: absolute;
+  min-width: 130px; max-width: 200px;
+  padding: 12px 14px;
+  font-family: 'VT323', monospace;
+  font-size: 20px;
+  text-align: center;
+  border: 4px solid;
+  line-height: 1.1;
+  cursor: pointer;
+  box-shadow: 4px 4px 0 var(--bg-deep);
+  word-wrap: break-word;
+}
+.meme-bubble.bad  { background: var(--neon-red);   color: var(--text-light); border-color: var(--bg-deep); }
+.meme-bubble.good { background: var(--neon-green); color: var(--text-dark);  border-color: var(--bg-deep); }
+.meme-bubble.blocked { animation: deflect 0.4s forwards; pointer-events: none; }
+@keyframes deflect {
+  to { transform: scale(0.2) rotate(45deg); opacity: 0; }
+}
+.meme-bubble.wronged { animation: wrong 0.4s forwards; pointer-events: none; }
+@keyframes wrong {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.2); background: var(--neon-orange); }
+  100% { transform: scale(0); opacity: 0; }
+}
+#meme-shield-cursor {
+  position: absolute;
+  width: 48px; height: 56px;
+  pointer-events: none;
+  z-index: 200;
+  display: none;
+}
+
+/* ===== Fake News Detective ===== */
+.phone-frame {
+  position: absolute;
+  top: 30px; left: 50%; transform: translateX(-50%);
+  width: 280px; height: 440px;
+  background: var(--bg-deep);
+  border: 8px solid var(--neon-cyan);
+  border-radius: 28px;
+  padding: 20px 14px;
+  box-shadow: 0 0 24px rgba(0,240,255,0.4);
+}
+.phone-screen-title {
+  font-size: 9px;
+  color: var(--neon-yellow);
+  text-align: center;
+  margin-bottom: 14px;
+  letter-spacing: 1px;
+}
+.news-alert {
+  padding: 14px;
+  font-family: 'VT323', monospace;
+  font-size: 19px;
+  line-height: 1.2;
+  cursor: grab;
+  box-shadow: 4px 4px 0 var(--bg-deep);
+  border: 4px solid;
+}
+.news-alert.fake {
+  background: var(--neon-orange);
+  color: var(--text-dark);
+  border-color: var(--neon-red);
+  animation: alertPulse 0.6s ease-in-out infinite alternate;
+}
+.news-alert.true {
+  background: var(--neon-cyan);
+  color: var(--text-dark);
+  border-color: var(--bg-deep);
+}
+@keyframes alertPulse {
+  from { box-shadow: 4px 4px 0 var(--bg-deep), 0 0 0 var(--neon-red); }
+  to   { box-shadow: 4px 4px 0 var(--bg-deep), 0 0 20px var(--neon-red); }
+}
+.recycle-bin, .verified-folder {
+  position: absolute;
+  width: 130px; height: 160px;
+  background: var(--surface);
+  border: 6px solid;
+  display: flex; align-items: center; justify-content: center;
+  flex-direction: column;
+  font-size: 12px;
+  text-align: center;
+  padding: 10px;
+  box-shadow: 4px 4px 0 var(--title-3);
+}
+.recycle-bin    { right: 60px; bottom: 60px; border-color: var(--neon-red);   color: var(--neon-red); }
+.verified-folder{ right: 60px; top:    80px; border-color: var(--neon-green); color: var(--neon-green); }
+.recycle-bin.hover    { background: var(--neon-red);   color: var(--text-light); }
+.verified-folder.hover{ background: var(--neon-green); color: var(--text-dark); }
+.recycle-bin .bin-icon, .verified-folder .folder-icon { font-size: 48px; line-height: 1; margin-bottom: 6px; }
+
+/* ===== Inbox Cleaner ===== */
+.inbox-zone, .trash-zone {
+  position: absolute;
+  bottom: 30px;
+  width: 200px; height: 170px;
+  border: 6px solid;
+  display: flex; align-items: center; justify-content: center;
+  flex-direction: column;
+  font-size: 12px;
+  text-align: center;
+  background: var(--surface);
+  padding: 10px;
+  box-shadow: 4px 4px 0 var(--title-3);
+}
+.inbox-zone { left: 50px;  border-color: var(--neon-green); color: var(--neon-green); }
+.trash-zone { right: 50px; border-color: var(--neon-red);   color: var(--neon-red); }
+.inbox-zone.hover { background: var(--neon-green); color: var(--text-dark); }
+.trash-zone.hover { background: var(--neon-red);   color: var(--text-light); }
+.inbox-zone .zone-icon, .trash-zone .zone-icon { font-size: 46px; margin-bottom: 6px; line-height: 1; }
+.email-card {
+  position: absolute;
+  width: 280px;
+  padding: 14px;
+  background: var(--text-light);
+  color: var(--text-dark);
+  border: 4px solid var(--bg-deep);
+  font-family: 'VT323', monospace;
+  font-size: 20px;
+  line-height: 1.2;
+  cursor: grab;
+  box-shadow: 4px 4px 0 var(--bg-deep);
+  top: 50px; left: 50%; transform: translateX(-50%);
+}
+.email-card .from {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 9px;
+  color: var(--neon-pink);
+  margin-bottom: 6px;
+  letter-spacing: 1px;
+}
+.email-card.virus { background: var(--neon-yellow); }
+#inbox-progress {
+  position: absolute;
+  top: 10px; left: 50%; transform: translateX(-50%);
+  font-size: 11px;
+  color: var(--neon-yellow);
+  letter-spacing: 2px;
+}
+
+/* ===== Phishing Hook Cut ===== */
+#game-area.phish-mode { cursor: none; }
+.phish-line {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  width: 6px;
+  background: var(--neon-cyan);
+  box-shadow: 0 0 8px var(--neon-cyan);
+  transform: translateX(-50%);
+  cursor: none;
+  z-index: 5;
+  animation: lineSwing 2s ease-in-out infinite alternate;
+  transform-origin: top center;
+}
+@keyframes lineSwing {
+  from { transform: translateX(-50%) rotate(-4deg); }
+  to   { transform: translateX(-50%) rotate(4deg); }
+}
+.phish-bait {
+  position: absolute;
+  width: 220px;
+  padding: 18px;
+  background: var(--neon-yellow);
+  color: var(--text-dark);
+  border: 6px solid var(--neon-red);
+  font-size: 14px;
+  text-align: center;
+  letter-spacing: 1px;
+  box-shadow: 0 0 16px var(--neon-yellow);
+  transform: translateX(-50%);
+  left: 50%;
+  animation: baitWiggle 0.6s ease-in-out infinite alternate;
+}
+@keyframes baitWiggle {
+  from { transform: translateX(-50%) scale(1); }
+  to   { transform: translateX(-50%) scale(1.06); }
+}
+.phish-hook {
+  position: absolute;
+  width: 30px; height: 30px;
+  left: 50%; transform: translateX(-50%);
+  border: 5px solid var(--neon-cyan);
+  border-top: none;
+  border-radius: 0 0 100% 100%;
+}
+.scissors-cursor {
+  position: absolute;
+  width: 44px; height: 44px;
+  pointer-events: none;
+  z-index: 200;
+  font-size: 32px;
+  display: flex; align-items: center; justify-content: center;
+}
+.phish-instruction {
+  position: absolute;
+  top: 30px; left: 50%; transform: translateX(-50%);
+  font-size: 11px;
+  color: var(--neon-pink);
+  text-align: center;
+  letter-spacing: 1px;
+}
+.phish-line.cut {
+  animation: lineCut 0.4s forwards;
+}
+@keyframes lineCut {
+  to { transform: translateX(-50%) translateY(20px) rotate(20deg); opacity: 0; }
+}
+.phish-bait.dropped {
+  animation: baitDrop 0.6s forwards;
+}
+@keyframes baitDrop {
+  to { transform: translateX(-50%) translateY(400px) rotate(60deg); opacity: 0.4; }
+}
+
+/* ===== Particle FX ===== */
+.fx-particle {
+  position: absolute;
+  width: 8px; height: 8px;
+  pointer-events: none;
+  z-index: 300;
+}
+
+/* ===== Scaling for small viewports ===== */
+@media (max-width: 980px), (max-height: 620px) {
+  #stage {
+    transform: scale(min(calc(100vw / 960), calc(100vh / 600)));
+  }
+}
+</style>
+</head>
+<body>
+
+<div id="stage">
+
+  <!-- HUD -->
+  <div id="hud" class="hidden">
+    <div id="lives" data-testid="lives-display"></div>
+    <div id="timer-wrap">
+      <div id="timer-label" data-i18n="time">TIME</div>
+      <div id="timer-bar-bg"><div id="timer-bar" data-testid="timer-bar"></div></div>
+    </div>
+    <div id="round-label" data-testid="round-label">ROUND 1</div>
+  </div>
+
+  <!-- Start Screen -->
+  <div id="screen-start" class="screen active" data-testid="screen-start">
+    <h1 data-testid="game-title">HACKERWARE</h1>
+    <div class="subtitle" data-i18n="subtitle">CYBER SAFETY MICRO-GAMES</div>
+    <div id="lang-wrapper">
+      <div id="lang-selector">
+        <button class="lang-btn" data-lang="en" data-testid="lang-en-button">ENGLISH</button>
+        <button class="lang-btn active" data-lang="es" data-testid="lang-es-button">ESPAÑOL</button>
+      </div>
+    </div>
+    <div class="lives-preview">
+      <div class="heart"></div><div class="heart"></div><div class="heart"></div>
+    </div>
+    <button class="pixel-btn" id="btn-play" data-testid="play-button" data-i18n="play">PLAY</button>
+    <div class="hint" data-i18n="startHint">
+      Quick! Beat each 5-game challenge to learn how to stay safe online.<br>
+      Use your mouse to click and drag. Good luck, cyber-hero!
+    </div>
+  </div>
+
+  <!-- Intro Screen (mini-game prompt) -->
+  <div id="screen-intro" class="screen" data-testid="screen-intro">
+    <div class="intro-top">
+      <div class="prompt" id="intro-prompt" data-testid="intro-prompt">SORT THE MAIL!</div>
+      <div class="topic" id="intro-topic">DIGITAL RISKS</div>
+      <div class="description" id="intro-description" data-testid="intro-description"></div>
+    </div>
+    <div class="intro-bottom">
+      <div class="demo" id="intro-tutorial" data-testid="intro-tutorial"></div>
+    </div>
+  </div>
+
+  <!-- Mini-Game Stage -->
+  <div id="screen-game" class="screen" data-testid="screen-game">
+    <div id="game-area" data-testid="game-area"></div>
+  </div>
+
+  <!-- Feedback Screen -->
+  <div id="screen-feedback" class="screen" data-testid="screen-feedback">
+    <div class="result win" id="feedback-result" data-testid="feedback-result">YOU WIN!</div>
+    <div class="tip-card" style="display: flex; align-items: center; gap: 24px;">
+      <img id="feedback-image" src="" style="width: 250px; height: auto; flex-shrink: 0; display: none;" />
+      <div>
+        <h3 data-i18n="cyberTip">CYBER TIP</h3>
+        <p id="feedback-tip" data-testid="feedback-tip">A strong password is like a secret shield!</p>
+      </div>
+    </div>
+    <button class="pixel-btn green" id="btn-next" data-testid="next-button" data-i18n="next" style="margin-top:22px;">NEXT</button>
+  </div>
+
+  <!-- Game Over Screen -->
+  <div id="screen-gameover" class="screen" data-testid="screen-gameover">
+    <h2 data-i18n="gameOver">GAME OVER</h2>
+    <div class="gameover-sub" data-i18n="gameOverSub">YOUR CYBER MISSION IS DONE</div>
+    <div class="rounds-summary" id="gameover-summary" data-testid="gameover-summary">You survived 0 rounds!</div>
+    <button class="pixel-btn green" id="btn-restart" data-testid="restart-button" data-i18n="playAgain">PLAY AGAIN</button>
+  </div>
+
+  <!-- Review Results Screen -->
+  <div id="screen-review" class="screen" data-testid="screen-review">
+    <h2 data-i18n="reviewResults">REVIEW RESULTS</h2>
+    <div class="review-list" id="review-list"></div>
+    <button class="pixel-btn green" id="btn-review-restart" data-testid="review-restart-button" data-i18n="playAgain">PLAY AGAIN</button>
+    
+    <div class="tip-box" id="review-tip-box">
+      <button class="tip-close-btn" id="btn-close-tip">X</button>
+      <div style="display: flex; align-items: center; gap: 20px;">
+        <img id="review-tip-sprite" src="" style="width: 400px; height: auto; flex-shrink: 0; margin-left: -40px;" />
+        <div id="review-tip-text"></div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+/* =========================================================
+   HACKERWARE - GAME ENGINE
+   ========================================================= */
+
+/* ---------------------------------------------------------
+   1. SOUND SYNTHESIZER (Web Audio API)
+   All sounds generated procedurally - no external files.
+   --------------------------------------------------------- */
+const SoundSynth = (() => {
+  let ctx = null;
+  let masterGain = null;
+
+  function init() {
+    if (ctx) return;
+    const AC = window.AudioContext || window.webkitAudioContext;
+    ctx = new AC();
+    masterGain = ctx.createGain();
+    masterGain.gain.value = 0.35;
+    masterGain.connect(ctx.destination);
+  }
+
+  // Helper: play a single tone with envelope
+  function tone({freq=440, type='square', dur=0.12, vol=0.5, start=0, slideTo=null, attack=0.005, release=0.05}) {
+    if (!ctx) init();
+    const t0 = ctx.currentTime + start;
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.type = type;
+    osc.frequency.setValueAtTime(freq, t0);
+    if (slideTo !== null) {
+      osc.frequency.exponentialRampToValueAtTime(Math.max(20, slideTo), t0 + dur);
+    }
+    // ADSR-ish
+    gain.gain.setValueAtTime(0.0001, t0);
+    gain.gain.exponentialRampToValueAtTime(vol, t0 + attack);
+    gain.gain.exponentialRampToValueAtTime(0.0001, t0 + dur);
+    osc.connect(gain).connect(masterGain);
+    osc.start(t0);
+    osc.stop(t0 + dur + release);
+  }
+
+  // Helper: noise burst (for snip, fizzle)
+  function noiseBurst({dur=0.08, vol=0.4, start=0, filterFreq=2000, type='lowpass'}) {
+    if (!ctx) init();
+    const t0 = ctx.currentTime + start;
+    const bufferSize = ctx.sampleRate * dur;
+    const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
+    const data = buffer.getChannelData(0);
+    for (let i = 0; i < bufferSize; i++) data[i] = Math.random() * 2 - 1;
+    const noise = ctx.createBufferSource();
+    noise.buffer = buffer;
+    const filter = ctx.createBiquadFilter();
+    filter.type = type;
+    filter.frequency.value = filterFreq;
+    const gain = ctx.createGain();
+    gain.gain.setValueAtTime(0.0001, t0);
+    gain.gain.exponentialRampToValueAtTime(vol, t0 + 0.005);
+    gain.gain.exponentialRampToValueAtTime(0.0001, t0 + dur);
+    noise.connect(filter).connect(gain).connect(masterGain);
+    noise.start(t0);
+    noise.stop(t0 + dur);
+  }
+
+  // ===== Public Sound Functions =====
+
+  // 1. Cheerful ascending retro chime
+  function playWinSound() {
+    init();
+    const notes = [523.25, 659.25, 783.99, 1046.50]; // C5 E5 G5 C6
+    notes.forEach((f, i) => tone({freq: f, type: 'square', dur: 0.12, vol: 0.35, start: i * 0.08}));
+    tone({freq: 1318.51, type: 'square', dur: 0.25, vol: 0.4, start: notes.length * 0.08});
+  }
+
+  // 2. Descending low-frequency buzz / fizzle on fail
+  function playLoseSound() {
+    init();
+    tone({freq: 220, type: 'sawtooth', dur: 0.5, vol: 0.4, slideTo: 55});
+    noiseBurst({dur: 0.3, vol: 0.2, filterFreq: 400, type: 'lowpass'});
+  }
+
+  // 3. Crisp high-pitched blip every second
+  function playTickSound() {
+    init();
+    tone({freq: 1500, type: 'square', dur: 0.04, vol: 0.25});
+  }
+
+  // 4. Subtle clean tactile click for UI
+  function playClickSound() {
+    init();
+    tone({freq: 880, type: 'square', dur: 0.04, vol: 0.2});
+    tone({freq: 1320, type: 'square', dur: 0.04, vol: 0.15, start: 0.02});
+  }
+
+  // 5. Dramatic, slowed-down 8-bit melody on game over
+  function playGameOverSound() {
+    init();
+    // Sad descending melody
+    const notes = [
+      {f: 659.25, d: 0.25}, // E5
+      {f: 587.33, d: 0.25}, // D5
+      {f: 523.25, d: 0.25}, // C5
+      {f: 440.00, d: 0.35}, // A4
+      {f: 392.00, d: 0.50}, // G4
+      {f: 329.63, d: 0.80}  // E4
+    ];
+    let t = 0;
+    notes.forEach(n => {
+      tone({freq: n.f, type: 'square', dur: n.d, vol: 0.35, start: t});
+      tone({freq: n.f / 2, type: 'triangle', dur: n.d, vol: 0.2, start: t});
+      t += n.d * 0.9;
+    });
+  }
+
+  // Bonus utility sounds for mini-game specific events
+  function playSnap() {
+    init();
+    tone({freq: 800, type: 'square', dur: 0.05, vol: 0.25});
+    tone({freq: 1200, type: 'square', dur: 0.06, vol: 0.25, start: 0.04});
+  }
+  function playDeflect() {
+    init();
+    tone({freq: 600, type: 'square', dur: 0.06, vol: 0.3, slideTo: 1400});
+    noiseBurst({dur: 0.05, vol: 0.15, filterFreq: 3000, type: 'highpass'});
+  }
+  function playSnip() {
+    init();
+    noiseBurst({dur: 0.06, vol: 0.4, filterFreq: 6000, type: 'highpass'});
+    tone({freq: 2000, type: 'square', dur: 0.04, vol: 0.2, start: 0.02});
+  }
+  function playCrumple() {
+    init();
+    noiseBurst({dur: 0.25, vol: 0.35, filterFreq: 1200, type: 'bandpass'});
+    tone({freq: 300, type: 'sawtooth', dur: 0.2, vol: 0.2, slideTo: 80});
+  }
+
+  // Resume context (browsers require user gesture)
+  function resume() { if (ctx && ctx.state === 'suspended') ctx.resume(); }
+
+  return {
+    init, resume,
+    playWinSound, playLoseSound, playTickSound, playClickSound, playGameOverSound,
+    playSnap, playDeflect, playSnip, playCrumple
+  };
+})();
+
+/* ---------------------------------------------------------
+   2. GLOBAL GAME STATE
+   --------------------------------------------------------- */
+const Game = {
+  lang: 'es', // 'en' | 'es' - selected on start screen
+  lives: 3,
+  roundsWon: 0,
+  currentTimerSec: 15,
+  timerInterval: null,
+  remaining: 0,
+  miniGameQueue: [],
+  activeMiniGame: null,
+  acceptInput: false,
+  history: [],
+};
+
+/* ---------------------------------------------------------
+   2b. I18N - bilingual dictionary for all static UI text.
+   Per-mini-game prompts/tips live on the MiniGame objects as
+   { en: '...', es: '...' } and are resolved via t().
+   --------------------------------------------------------- */
+const I18N = {
+  en: {
+    subtitle:    'CYBER SAFETY MICRO-GAMES',
+    chooseLang:  'CHOOSE LANGUAGE / ELIGE IDIOMA',
+    play:        'PLAY',
+    startHint:   'Quick! Beat each 5-game challenge to learn how to stay safe online.<br>Use your mouse to click and drag. Good luck, cyber-hero!',
+    time:        'TIME',
+    round:       'ROUND',
+    cyberTip:    'CYBER TIP',
+    next:        'NEXT',
+    youWin:      'YOU WIN!',
+    ohNo:        'OH NO!',
+    gameOver:    'GAME OVER',
+    gameOverSub: 'YOUR CYBER MISSION IS DONE',
+    survived:    (n) => `You survived ${n} round${n === 1 ? '' : 's'}!`,
+    playAgain:   'PLAY AGAIN',
+    reviewResults: 'REVIEW RESULTS',
+    clickGameTip: 'CLICK A GAME TO VIEW TIP',
+  },
+  es: {
+    subtitle:    'MICRO-JUEGOS DE CIBER-SEGURIDAD',
+    chooseLang:  'CHOOSE LANGUAGE / ELIGE IDIOMA',
+    play:        'JUGAR',
+    startHint:   '¡Rápido! Supera los 5 mini-juegos para aprender a estar a salvo en línea.<br>Usa el ratón para hacer clic y arrastrar. ¡Suerte, ciber-héroe!',
+    time:        'TIEMPO',
+    round:       'RONDA',
+    cyberTip:    'CIBER-CONSEJO',
+    next:        'SIGUIENTE',
+    youWin:      '¡GANASTE!',
+    ohNo:        '¡OH NO!',
+    gameOver:    'FIN DEL JUEGO',
+    gameOverSub: 'TU MISIÓN CIBER HA TERMINADO',
+    survived:    (n) => `¡Sobreviviste ${n} ronda${n === 1 ? '' : 's'}!`,
+    playAgain:   'JUGAR DE NUEVO',
+    reviewResults: 'RESULTADOS',
+    clickGameTip: 'HAZ CLIC PARA VER EL CONSEJO',
+  }
+};
+
+// Helper: resolve a value that may be {en, es} OR a plain string OR a function(n)
+function t(valOrKey, ...args) {
+  if (valOrKey == null) return '';
+  if (typeof valOrKey === 'string') {
+    // treat as I18N key
+    const entry = I18N[Game.lang][valOrKey];
+    if (typeof entry === 'function') return entry(...args);
+    return entry != null ? entry : valOrKey;
+  }
+  if (typeof valOrKey === 'object') {
+    return valOrKey[Game.lang] != null ? valOrKey[Game.lang] : (valOrKey.en || '');
+  }
+  return String(valOrKey);
+}
+
+// Walk all data-i18n elements and refresh their text from the dictionary.
+function applyLanguage() {
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    const key = el.getAttribute('data-i18n');
+    const val = I18N[Game.lang][key];
+    if (val != null) {
+      // hint may contain <br>, use innerHTML for that key
+      if (key === 'startHint') el.innerHTML = val;
+      else el.textContent = val;
+    }
+  });
+  // Update active lang button styling
+  document.querySelectorAll('.lang-btn').forEach(b => {
+    b.classList.toggle('active', b.dataset.lang === Game.lang);
+  });
+}
+
+/* ---------------------------------------------------------
+   3. SCREEN MANAGER
+   --------------------------------------------------------- */
+const Screens = {
+  show(id) {
+    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+  },
+  hud(visible) {
+    const hud = document.getElementById('hud');
+    if (visible) hud.classList.remove('hidden');
+    else hud.classList.add('hidden');
+  }
+};
+
+/* ---------------------------------------------------------
+   4. LIVES UI
+   --------------------------------------------------------- */
+function renderLives() {
+  const el = document.getElementById('lives');
+  el.innerHTML = '';
+  for (let i = 0; i < 3; i++) {
+    const h = document.createElement('div');
+    h.className = 'heart' + (i >= Game.lives ? ' lost' : '');
+    h.dataset.testid = `heart-${i}`;
+    el.appendChild(h);
+  }
+}
+
+/* ---------------------------------------------------------
+   5. TIMER
+   --------------------------------------------------------- */
+const Timer = {
+  start(seconds, onExpire) {
+    Timer.stop();
+    Game.remaining = seconds;
+    Timer.updateBar(seconds, seconds);
+    let lastWhole = Math.ceil(seconds);
+    const startTime = performance.now();
+    Game.timerInterval = setInterval(() => {
+      const elapsed = (performance.now() - startTime) / 1000;
+      Game.remaining = Math.max(0, seconds - elapsed);
+      Timer.updateBar(Game.remaining, seconds);
+      const wholeNow = Math.ceil(Game.remaining);
+      if (wholeNow < lastWhole && wholeNow > 0) {
+        SoundSynth.playTickSound();
+        lastWhole = wholeNow;
+      }
+      if (Game.remaining <= 0) {
+        Timer.stop();
+        onExpire && onExpire();
+      }
+    }, 50);
+  },
+  stop() {
+    if (Game.timerInterval) {
+      clearInterval(Game.timerInterval);
+      Game.timerInterval = null;
+    }
+  },
+  updateBar(remaining, total) {
+    const pct = Math.max(0, Math.min(100, (remaining / total) * 100));
+    document.getElementById('timer-bar').style.width = pct + '%';
+  }
+};
+
+/* ---------------------------------------------------------
+   6. UTILITIES
+   --------------------------------------------------------- */
+function randInt(min, max) { return Math.floor(Math.random() * (max - min + 1)) + min; }
+function pick(arr) { return arr[Math.floor(Math.random() * arr.length)]; }
+function shuffle(arr) {
+  const a = arr.slice();
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+// Make an element draggable by mouse, with onSnap/onRelease callbacks.
+function makeDraggable(el, opts={}) {
+  let dragging = false;
+  let offsetX = 0, offsetY = 0;
+  const onDown = (e) => {
+    if (!Game.acceptInput) return;
+    if (opts.disabled && opts.disabled()) return;
+    dragging = true;
+    el.classList.add('dragging');
+    const rect = el.getBoundingClientRect();
+    const point = getPoint(e);
+    offsetX = point.x - rect.left;
+    offsetY = point.y - rect.top;
+    SoundSynth.playClickSound();
+    e.preventDefault();
+  };
+  const onMove = (e) => {
+    if (!dragging) return;
+    const point = getPoint(e);
+    const parent = el.parentElement.getBoundingClientRect();
+    const scale = parent.width / 960; // approximate
+    el.style.left = ((point.x - offsetX - parent.left) / scale) + 'px';
+    el.style.top  = ((point.y - offsetY - parent.top)  / scale) + 'px';
+    opts.onDrag && opts.onDrag(el);
+  };
+  const onUp = (e) => {
+    if (!dragging) return;
+    dragging = false;
+    el.classList.remove('dragging');
+    opts.onRelease && opts.onRelease(el);
+  };
+  el.addEventListener('mousedown', onDown);
+  el.addEventListener('touchstart', onDown, {passive: false});
+  document.addEventListener('mousemove', onMove);
+  document.addEventListener('touchmove', onMove, {passive: false});
+  document.addEventListener('mouseup', onUp);
+  document.addEventListener('touchend', onUp);
+}
+function getPoint(e) {
+  if (e.touches && e.touches[0]) return {x: e.touches[0].clientX, y: e.touches[0].clientY};
+  if (e.changedTouches && e.changedTouches[0]) return {x: e.changedTouches[0].clientX, y: e.changedTouches[0].clientY};
+  return {x: e.clientX, y: e.clientY};
+}
+
+// Returns the bounding box of an element in the GAME-AREA's local (unscaled) coords.
+function localRect(el) {
+  const ar = document.getElementById('game-area').getBoundingClientRect();
+  const r = el.getBoundingClientRect();
+  const scale = ar.width / 960;
+  return {
+    left: (r.left - ar.left) / scale,
+    top:  (r.top  - ar.top)  / scale,
+    right: (r.right - ar.left) / scale,
+    bottom: (r.bottom - ar.top) / scale,
+    width: r.width / scale,
+    height: r.height / scale,
+    cx: (r.left + r.width/2 - ar.left) / scale,
+    cy: (r.top + r.height/2 - ar.top) / scale,
+  };
+}
+function overlaps(a, b) {
+  return !(a.right < b.left || a.left > b.right || a.bottom < b.top || a.top > b.bottom);
+}
+function distance(ax, ay, bx, by) {
+  return Math.hypot(ax - bx, ay - by);
+}
+
+// Spawn particle burst at coords (game-area local)
+function spawnBurst(x, y, color) {
+  const ga = document.getElementById('game-area');
+  for (let i = 0; i < 8; i++) {
+    const p = document.createElement('div');
+    p.className = 'fx-particle';
+    p.style.background = color;
+    p.style.left = (x - 4) + 'px';
+    p.style.top  = (y - 4) + 'px';
+    const angle = (i / 8) * Math.PI * 2;
+    const dist = 40 + Math.random() * 20;
+    const dx = Math.cos(angle) * dist;
+    const dy = Math.sin(angle) * dist;
+    p.animate(
+      [
+        {transform: 'translate(0,0) scale(1)', opacity: 1},
+        {transform: `translate(${dx}px,${dy}px) scale(0)`, opacity: 0}
+      ],
+      {duration: 500, easing: 'ease-out'}
+    );
+    ga.appendChild(p);
+    setTimeout(() => p.remove(), 500);
+  }
+}
+
+/* ---------------------------------------------------------
+   6b. TUTORIAL DEMO TEMPLATES
+   Returns inline HTML for the looping pixel-art demo shown
+   on the intro screen for each mini-game.
+   --------------------------------------------------------- */
+// Pixel mouse cursor SVG (used in most demos)
+const CURSOR_SVG = `
+  <svg viewBox="0 0 16 16" preserveAspectRatio="xMidYMid meet">
+    <polygon points="2,1 2,12 5,9 7,14 9,13 7,8 11,8"
+      fill="#ffffff" stroke="#0d0221" stroke-width="1.5" stroke-linejoin="miter"/>
+  </svg>`;
+// Pixel scissors SVG (used in phishing demo)
+const SCISSORS_SVG = `
+  <svg viewBox="0 0 32 32" preserveAspectRatio="xMidYMid meet">
+    <circle cx="9"  cy="22" r="5" fill="none" stroke="#ff2975" stroke-width="3"/>
+    <circle cx="23" cy="22" r="5" fill="none" stroke="#ff2975" stroke-width="3"/>
+    <line x1="13" y1="18" x2="28" y2="3" stroke="#0066ff" stroke-width="3" stroke-linecap="round"/>
+    <line x1="19" y1="18" x2="4"  y2="3" stroke="#0066ff" stroke-width="3" stroke-linecap="round"/>
+  </svg>`;
+
+function buildDemoHTML(name, lang) {
+  switch (name) {
+    case 'password-puzzle':
+      return `
+        <div class="demo demo-password">
+          <div class="d-slot"></div>
+          <div class="d-piece">A</div>
+          <div class="demo-cursor">${CURSOR_SVG}</div>
+        </div>`;
+    case 'meme-shield':
+      return `
+        <div class="demo demo-meme">
+          <div class="d-bubble">${lang === 'es' ? '¡FEO!' : 'UGLY!'}</div>
+          <div class="demo-cursor">${CURSOR_SVG}</div>
+        </div>`;
+    case 'fake-news':
+      return `
+        <div class="demo demo-fakenews">
+          <div class="d-alert">⚠ ${lang === 'es' ? 'FALSO' : 'FAKE'}</div>
+          <div class="d-bin">🗑</div>
+          <div class="demo-cursor">${CURSOR_SVG}</div>
+        </div>`;
+    case 'inbox-cleaner':
+      return `
+        <div class="demo demo-inbox">
+          <div class="d-email">${lang === 'es' ? '¡GRATIS!' : 'FREE!'}</div>
+          <div class="d-trash">🗑</div>
+          <div class="demo-cursor">${CURSOR_SVG}</div>
+        </div>`;
+    case 'phishing-hook':
+      return `
+        <div class="demo demo-phish">
+          <div class="d-line"></div>
+          <div class="d-bait">${lang === 'es' ? 'PREMIO' : 'PRIZE'}</div>
+          <div class="demo-scissors-cursor">${SCISSORS_SVG}</div>
+        </div>`;
+    default:
+      return '';
+  }
+}
+
+/* ---------------------------------------------------------
+   7. MINI-GAMES REGISTRY
+   Each mini-game implements: { name, topic, prompt, tipWin, tipLose, mount(area), cleanup() }
+   --------------------------------------------------------- */
+const MiniGames = [];
+
+/* ===== Mini-Game 1: Password Puzzle ===== */
+MiniGames.push({
+  name: 'password-puzzle',
+  topic:   { en: 'SECURITY & PRIVACY', es: 'SEGURIDAD Y PRIVACIDAD' },
+  prompt:  { en: 'BUILD A STRONG PASSWORD!', es: '¡CREA UNA CONTRASEÑA FUERTE!' },
+  tipWin:  {
+    en: 'A strong password is like a secret shield! Combine capital letters, numbers, and symbols to keep your accounts safe.',
+    es: '¡Una contraseña fuerte es como un escudo secreto! Combina mayúsculas, números y símbolos para proteger tus cuentas.'
+  },
+  tipLose: {
+    en: 'A strong password is like a secret shield! Combine capital letters, numbers, and symbols to keep your accounts safe.',
+    es: '¡Una contraseña fuerte es como un escudo secreto! Combina mayúsculas, números y símbolos para proteger tus cuentas.'
+  },
+  desc:    {
+    en: 'Drag each puzzle piece into a slot to build a strong password!',
+    es: '¡Arrastra cada pieza del rompecabezas a una casilla para crear una contraseña fuerte!'
+  },
+  instr:   { en: 'DRAG THE PIECES INTO THE SLOTS', es: 'ARRASTRA LAS PIEZAS A LAS CASILLAS' },
+  mount(area, onWin, onLose) {
+    // Title
+    const title = document.createElement('div');
+    title.className = 'pw-title';
+    title.textContent = t(this.instr);
+    area.appendChild(title);
+
+    // Pieces definition
+    const piecesData = [
+      {label: 'A', color: '#39ff14', kind: 'CAPITAL'},
+      {label: '7', color: '#00f0ff', kind: 'NUMBER'},
+      {label: '@', color: '#ff2975', kind: 'SYMBOL'},
+      {label: 'k', color: '#ffbe0b', kind: 'lower'}
+    ];
+
+    // Slot row
+    const slotRow = document.createElement('div');
+    slotRow.className = 'pw-slot-row';
+    area.appendChild(slotRow);
+    const slots = [];
+    for (let i = 0; i < piecesData.length; i++) {
+      const s = document.createElement('div');
+      s.className = 'pw-slot';
+      s.dataset.testid = `pw-slot-${i}`;
+      s.textContent = '?';
+      slotRow.appendChild(s);
+      slots.push(s);
+    }
+
+    // Pieces scattered in bottom area
+    const piecePositions = shuffle([
+      {x: 120, y: 320}, {x: 320, y: 380}, {x: 540, y: 320}, {x: 740, y: 380}
+    ]);
+    const pieces = [];
+    piecesData.forEach((pd, i) => {
+      const p = document.createElement('div');
+      p.className = 'pw-piece draggable';
+      p.textContent = pd.label;
+      p.style.background = pd.color;
+      p.style.left = piecePositions[i].x + 'px';
+      p.style.top  = piecePositions[i].y + 'px';
+      p.dataset.kind = pd.kind;
+      p.dataset.testid = `pw-piece-${pd.kind.toLowerCase()}`;
+      area.appendChild(p);
+      pieces.push(p);
+      makeDraggable(p, {
+        disabled: () => p.classList.contains('placed'),
+        onRelease: (el) => {
+          // Find nearest empty slot
+          const elR = localRect(el);
+          let bestSlot = null, bestDist = Infinity;
+          slots.forEach(s => {
+            if (s.classList.contains('filled')) return;
+            const sR = localRect(s);
+            const d = distance(elR.cx, elR.cy, sR.cx, sR.cy);
+            if (d < bestDist) { bestDist = d; bestSlot = s; }
+          });
+          if (bestSlot && bestDist < 70) {
+            // Snap
+            const sR = localRect(bestSlot);
+            el.style.left = (sR.cx - 44) + 'px';
+            el.style.top  = (sR.cy - 44) + 'px';
+            el.classList.add('placed');
+            bestSlot.classList.add('filled');
+            bestSlot.textContent = '';
+            SoundSynth.playSnap();
+            spawnBurst(sR.cx, sR.cy, pd.color);
+            // Check win
+            if (slots.every(s => s.classList.contains('filled'))) {
+              setTimeout(() => onWin(), 250);
+            }
+          }
+        }
+      });
+    });
+  },
+  cleanup() {}
+});
+
+/* ===== Mini-Game 2: Meme Shield ===== */
+MiniGames.push({
+  name: 'meme-shield',
+  topic:  { en: 'DIGITAL WELL-BEING', es: 'BIENESTAR DIGITAL' },
+  prompt: { en: 'BLOCK THE BULLY!',   es: '¡BLOQUEA AL ABUSÓN!' },
+  tipWin:  {
+    en: 'Be kind online! If you see mean comments or offensive memes, do not share them. Talk to a trusted adult or teacher.',
+    es: '¡Sé amable en línea! Si ves comentarios crueles o memes ofensivos, no los compartas. Habla con un adulto o maestro de confianza.'
+  },
+  tipLose: {
+    en: 'Be kind online! If you see mean comments or offensive memes, do not share them. Talk to a trusted adult or teacher.',
+    es: '¡Sé amable en línea! Si ves comentarios crueles o memes ofensivos, no los compartas. Habla con un adulto o maestro de confianza.'
+  },
+  desc: {
+    en: 'Click only the mean red messages to block them. Let the kind green ones pass!',
+    es: '¡Haz clic solo en los mensajes rojos crueles para bloquearlos. Deja pasar los verdes amables!'
+  },
+  instr:  {
+    en: 'CLICK ONLY THE MEAN MESSAGES (RED). LET THE NICE ONES (GREEN) PASS.',
+    es: 'HAZ CLIC SOLO EN LOS MENSAJES CRUELES (ROJOS). DEJA PASAR LOS BUENOS (VERDES).'
+  },
+  badMemes: {
+    en: ['UR DUMB!', 'NOBODY LIKES U', 'LOSER!!!', 'GO AWAY', 'UGLY!!!'],
+    es: ['¡ERES TONTO!', 'NADIE TE QUIERE', '¡PERDEDOR!', '¡VETE!', '¡FEO!']
+  },
+  goodMemes: {
+    en: ['GREAT JOB!', 'YOU ROCK!', 'HI FRIEND', 'NICE WORK', 'KEEP GOING'],
+    es: ['¡BUEN TRABAJO!', '¡ERES GENIAL!', 'HOLA AMIGO', 'MUY BIEN', '¡SIGUE ASÍ!']
+  },
+  _interval: null,
+  _resolved: false,
+  mount(area, onWin, onLose) {
+    this._resolved = false;
+    area.classList.add('meme-mode'); // custom shield cursor without renaming id
+
+    // Fixed instruction header — solid white with bottom border.
+    // z-index keeps it above any falling bubbles so text is never overlapped.
+    const header = document.createElement('div');
+    header.className = 'meme-header';
+    header.textContent = t(this.instr);
+    area.appendChild(header);
+
+    // Custom shield cursor
+    const cursor = document.createElement('div');
+    cursor.id = 'meme-shield-cursor';
+    cursor.style.display = 'block';
+    cursor.innerHTML = `
+      <svg viewBox="0 0 48 56" width="48" height="56">
+        <polygon points="24,2 46,12 42,38 24,54 6,38 2,12" fill="#00f0ff" stroke="#0d0221" stroke-width="3"/>
+        <polygon points="24,12 36,18 34,34 24,44 14,34 12,18" fill="#ff2975" stroke="#0d0221" stroke-width="2"/>
+      </svg>`;
+    area.appendChild(cursor);
+
+    const moveCursor = (e) => {
+      const ar = area.getBoundingClientRect();
+      const scale = ar.width / 960;
+      cursor.style.left = ((e.clientX - ar.left) / scale - 24) + 'px';
+      cursor.style.top  = ((e.clientY - ar.top)  / scale - 28) + 'px';
+    };
+    area.addEventListener('mousemove', moveCursor);
+    this._moveCursor = moveCursor;
+
+    const badMemes = t(this.badMemes);
+    const goodMemes = t(this.goodMemes);
+    let badRemaining = 4;
+    let badEscaped = 0;
+    let badSpawned = 0;
+    const totalBad = 4;
+    const allBubbles = [];
+
+    const spawn = (isBad) => {
+      const b = document.createElement('div');
+      b.className = 'meme-bubble ' + (isBad ? 'bad' : 'good');
+      b.textContent = isBad ? pick(badMemes) : pick(goodMemes);
+      b.dataset.bad = isBad ? '1' : '0';
+      b.dataset.testid = isBad ? 'bad-meme' : 'good-meme';
+      const x = randInt(60, 700);
+      b.style.left = x + 'px';
+      b.style.top = '-60px';
+      area.appendChild(b);
+      let y = -60;
+      const speed = randInt(70, 110); // px per second
+      const startT = performance.now();
+      const step = (now) => {
+        if (this._resolved) return;
+        if (!b.parentNode) return;
+        const dt = (now - startT) / 1000;
+        y = -60 + speed * dt;
+        b.style.top = y + 'px';
+        if (y > 480) {
+          if (isBad) {
+            badEscaped++;
+            b.remove();
+            if (!this._resolved) {
+              this._resolved = true;
+              SoundSynth.playLoseSound();
+              setTimeout(onLose, 400);
+            }
+            return;
+          } else {
+            b.remove();
+            return;
+          }
+        }
+        requestAnimationFrame(step);
+      };
+      requestAnimationFrame(step);
+      b.addEventListener('click', () => {
+        if (this._resolved) return;
+        if (isBad) {
+          b.classList.add('blocked');
+          SoundSynth.playDeflect();
+          spawnBurst(parseInt(b.style.left) + 70, y + 30, '#00f0ff');
+          badRemaining--;
+          setTimeout(() => b.remove(), 400);
+          if (badRemaining <= 0) {
+            this._resolved = true;
+            setTimeout(onWin, 300);
+          }
+        } else {
+          // Wrong - clicked nice meme
+          b.classList.add('wronged');
+          SoundSynth.playLoseSound();
+          setTimeout(() => b.remove(), 400);
+          if (!this._resolved) {
+            this._resolved = true;
+            setTimeout(onLose, 400);
+          }
+        }
+      });
+      allBubbles.push(b);
+    };
+
+    // Spawn schedule
+    let i = 0;
+    const schedule = shuffle([
+      {bad: true}, {bad: false}, {bad: true}, {bad: false},
+      {bad: true}, {bad: false}, {bad: true}
+    ]);
+    this._interval = setInterval(() => {
+      if (this._resolved) { clearInterval(this._interval); return; }
+      if (i >= schedule.length) { clearInterval(this._interval); return; }
+      spawn(schedule[i].bad);
+      i++;
+    }, 700);
+    this._area = area;
+  },
+  cleanup() {
+    if (this._interval) clearInterval(this._interval);
+    if (this._area && this._moveCursor) {
+      this._area.removeEventListener('mousemove', this._moveCursor);
+      this._area.classList.remove('meme-mode');
+    }
+    this._resolved = true;
+  }
+});
+
+/* ===== Mini-Game 3: Fake News Detective =====
+   The screen randomly shows either a FAKE alert or a TRUE alert.
+   Player drags it to TRASH (for fake) or VERIFIED FOLDER (for true).
+   Wrong drop = lose, correct drop = win.
+*/
+MiniGames.push({
+  name: 'fake-news',
+  topic:  { en: 'MEDIA LITERACY',  es: 'ALFABETIZACIÓN MEDIÁTICA' },
+  prompt: { en: 'TRUE OR FAKE?',   es: '¿VERDAD O MENTIRA?' },
+  tipWin:  {
+    en: 'Not everything on the internet is true! If a story sounds too crazy or scary, check the source before sharing.',
+    es: '¡No todo en internet es real! Si una noticia suena muy alocada o da miedo, verifica la fuente antes de compartir.'
+  },
+  tipLose: {
+    en: 'Not everything on the internet is true! If a story sounds too crazy or scary, check the source before sharing.',
+    es: '¡No todo en internet es real! Si una noticia suena muy alocada o da miedo, verifica la fuente antes de compartir.'
+  },
+  desc: {
+    en: 'Drag fake alerts to the TRASH and true messages to the VERIFIED folder!',
+    es: '¡Arrastra las alertas falsas a la BASURA y los mensajes verdaderos a la carpeta VERIFICADO!'
+  },
+  // Pool of alerts. `fake: true` items belong in trash, others in verified folder.
+  pool: [
+    { fake: true,  text: { en: '⚠ FORWARD THIS TO 10 FRIENDS OR YOUR PHONE WILL EXPLODE TONIGHT!!! 100% TRUE!!!',
+                            es: '⚠ ¡¡¡REENVÍA ESTO A 10 AMIGOS O TU CELULAR EXPLOTARÁ ESTA NOCHE!!! ¡¡¡100% REAL!!!' } },
+    { fake: true,  text: { en: '🚨 THE SCHOOL IS CLOSED FOREVER!!! SHARE NOW!!!',
+                            es: '🚨 ¡¡¡CIERRAN LA ESCUELA PARA SIEMPRE!!! ¡COMPARTE YA!' } },
+    { fake: true,  text: { en: '🎁 FREE iPHONE FOR EVERY KID WHO REPOSTS THIS!!!',
+                            es: '🎁 ¡¡¡iPHONE GRATIS PARA CADA NIÑO QUE REENVÍE ESTO!!!' } },
+    { fake: true,  text: { en: '👻 A GHOST IS HACKING WIFI ROUTERS TONIGHT! UNPLUG NOW!!',
+                            es: '👻 ¡UN FANTASMA HACKEARÁ LOS WIFI ESTA NOCHE! ¡DESCONECTA YA!' } },
+    { fake: false, text: { en: '📚 Homework deadline: pages 30-32 due tomorrow morning. — Mrs. Smith',
+                            es: '📚 Tarea: páginas 30-32 para mañana. — Sra. Pérez' } },
+    { fake: false, text: { en: '🏫 School field trip permission form is due Friday. — Principal Office',
+                            es: '🏫 La autorización para la excursión escolar vence el viernes. — Dirección' } },
+    { fake: false, text: { en: '🎨 Art Club meets Wednesday at 3pm in Room 12. — Art Teacher',
+                            es: '🎨 Club de Arte el miércoles a las 3pm en el Salón 12. — Maestra de Arte' } },
+  ],
+  mount(area, onWin, onLose) {
+    // Pick a random alert from the pool
+    const item = pick(this.pool);
+
+    // Phone frame in the middle-left
+    const phone = document.createElement('div');
+    phone.className = 'phone-frame';
+    phone.style.left = '110px';
+    phone.style.transform = 'none';
+    phone.innerHTML = `<div class="phone-screen-title">${Game.lang === 'es' ? '¡ALERTA DE CHAT!' : 'CHAT ALERT!'}</div>`;
+    area.appendChild(phone);
+
+    // The alert message (style varies by fake/true)
+    const alertEl = document.createElement('div');
+    alertEl.className = 'news-alert draggable ' + (item.fake ? 'fake' : 'true');
+    alertEl.dataset.testid = item.fake ? 'fake-news-alert' : 'true-news-alert';
+    alertEl.dataset.fake = item.fake ? '1' : '0';
+    alertEl.textContent = t(item.text);
+    alertEl.style.position = 'absolute';
+    alertEl.style.left = '130px';
+    alertEl.style.top  = '120px';
+    alertEl.style.width = '240px';
+    area.appendChild(alertEl);
+
+    // Trash bin (for fake)
+    const bin = document.createElement('div');
+    bin.className = 'recycle-bin';
+    bin.dataset.testid = 'recycle-bin';
+    bin.innerHTML = `<div class="bin-icon">🗑</div><div>${Game.lang === 'es' ? 'BASURA' : 'TRASH'}</div>`;
+    area.appendChild(bin);
+
+    // Verified folder (for true)
+    const folder = document.createElement('div');
+    folder.className = 'verified-folder';
+    folder.dataset.testid = 'verified-folder';
+    folder.innerHTML = `<div class="folder-icon">✅</div><div>${Game.lang === 'es' ? 'VERIFICADO' : 'VERIFIED'}</div>`;
+    area.appendChild(folder);
+
+    let resolved = false;
+    makeDraggable(alertEl, {
+      onDrag: (el) => {
+        const aR = localRect(el);
+        bin.classList.toggle('hover',    overlaps(aR, localRect(bin)));
+        folder.classList.toggle('hover', overlaps(aR, localRect(folder)));
+      },
+      onRelease: (el) => {
+        if (resolved) return;
+        const aR = localRect(el);
+        const bR = localRect(bin);
+        const fR = localRect(folder);
+        let target = null;
+        if (overlaps(aR, bR)) target = 'trash';
+        else if (overlaps(aR, fR)) target = 'verified';
+        if (!target) {
+          bin.classList.remove('hover');
+          folder.classList.remove('hover');
+          return;
+        }
+        resolved = true;
+        const isCorrect = (target === 'trash' && item.fake) || (target === 'verified' && !item.fake);
+        const zoneR = target === 'trash' ? bR : fR;
+        if (isCorrect) {
+          el.style.transition = 'transform 0.4s, opacity 0.4s';
+          el.style.transform = 'scale(0.1) rotate(360deg)';
+          el.style.opacity = '0';
+          (target === 'trash' ? bin : folder).classList.add('hover');
+          if (target === 'trash') SoundSynth.playCrumple();
+          else SoundSynth.playSnap();
+          spawnBurst(zoneR.cx, zoneR.cy, '#39ff14');
+          setTimeout(onWin, 500);
+        } else {
+          el.style.transition = 'transform 0.4s';
+          el.style.transform = 'scale(1.3)';
+          SoundSynth.playLoseSound();
+          setTimeout(onLose, 500);
+        }
+      }
+    });
+  },
+  cleanup() {}
+});
+
+/* ===== Mini-Game 4: Inbox Cleaner ===== */
+MiniGames.push({
+  name: 'inbox-cleaner',
+  topic:  { en: 'DIGITAL RISKS', es: 'RIESGOS DIGITALES' },
+  prompt: { en: 'SORT THE MAIL!', es: '¡ORDENA EL CORREO!' },
+  tipWin: {
+    en: 'Watch your inbox! Never open emails or click links from strange senders or accounts promising free prizes.',
+    es: '¡Cuidado con tu bandeja! Nunca abras correos ni hagas clic en enlaces de remitentes extraños o cuentas que prometen premios gratis.'
+  },
+  tipLose: {
+    en: 'Watch your inbox! Never open emails or click links from strange senders or accounts promising free prizes.',
+    es: '¡Cuidado con tu bandeja! Nunca abras correos ni hagas clic en enlaces de remitentes extraños o cuentas que prometen premios gratis.'
+  },
+  desc: {
+    en: 'Drag virus emails to the trash and safe emails to the inbox!',
+    es: '¡Arrastra los correos con virus al basurero y los correos seguros a la bandeja!'
+  },
+  emailsPool: {
+    en: [
+      {from: 'F.R.E.E.PRIZES@xx',  text: 'FREE ROBUX! CLICK HERE NOW!!!', virus: true},
+      {from: 'WINNER-BOT',         text: 'YOU WON 1000000$ CLICK LINK', virus: true},
+      {from: 'Mrs. Smith',         text: 'Homework due Friday - reading p.42', virus: false},
+      {from: 'Best Friend',        text: 'See you at recess!', virus: false},
+      {from: 'h4ck3r@spam.zz',     text: 'YOUR ACCOUNT IS INFECTED CLICK FAST', virus: true},
+      {from: 'Mom',                text: 'Pick up milk after school. Love you!', virus: false}
+    ],
+    es: [
+      {from: 'PREM10S.GRAT1S@xx',  text: '¡ROBUX GRATIS! ¡HAZ CLIC AQUÍ AHORA!', virus: true},
+      {from: 'BOT-GANADOR',        text: '¡GANASTE 1000000$ HAZ CLIC EN EL ENLACE!', virus: true},
+      {from: 'Sra. Pérez',         text: 'Tarea para el viernes - lectura pág. 42', virus: false},
+      {from: 'Mejor Amigo',        text: '¡Nos vemos en el recreo!', virus: false},
+      {from: 'h4ck3r@spam.zz',     text: '¡TU CUENTA ESTÁ INFECTADA HAZ CLIC RÁPIDO!', virus: true},
+      {from: 'Mamá',               text: 'Compra leche después de la escuela. ¡Te quiero!', virus: false}
+    ]
+  },
+  inboxLabel: { en: 'INBOX<br>(SAFE)',  es: 'BANDEJA<br>(SEGURO)' },
+  trashLabel: { en: 'TRASH<br>(VIRUS)', es: 'BASURA<br>(VIRUS)' },
+  fromLabel:  { en: 'FROM:', es: 'DE:' },
+  progressLabel: { en: 'SORTED', es: 'CLASIFICADOS' },
+  mount(area, onWin, onLose) {
+    const emails = shuffle(t(this.emailsPool)).slice(0, 5);
+    const fromTxt = t(this.fromLabel);
+
+    const inbox = document.createElement('div');
+    inbox.className = 'inbox-zone';
+    inbox.dataset.testid = 'inbox-zone';
+    inbox.innerHTML = `<div class="zone-icon">📥</div><div>${t(this.inboxLabel)}</div>`;
+    area.appendChild(inbox);
+
+    const trash = document.createElement('div');
+    trash.className = 'trash-zone';
+    trash.dataset.testid = 'trash-zone';
+    trash.innerHTML = `<div class="zone-icon">🗑</div><div>${t(this.trashLabel)}</div>`;
+    area.appendChild(trash);
+
+    const progress = document.createElement('div');
+    progress.id = 'inbox-progress';
+    progress.dataset.testid = 'inbox-progress';
+    progress.textContent = `${t(this.progressLabel)} 0 / ${emails.length}`;
+    area.appendChild(progress);
+
+    let sorted = 0;
+    let correct = 0;
+    let resolved = false;
+    let current = null;
+
+    const showNext = () => {
+      if (resolved) return;
+      if (sorted >= emails.length) {
+        resolved = true;
+        if (correct >= 3) setTimeout(onWin, 200);
+        else setTimeout(onLose, 200);
+        return;
+      }
+      const data = emails[sorted];
+      const card = document.createElement('div');
+      card.className = 'email-card draggable' + (data.virus ? ' virus' : '');
+      card.dataset.testid = data.virus ? 'email-virus' : 'email-safe';
+      card.innerHTML = `<div class="from">${fromTxt} ${data.from}</div>${data.text}`;
+      area.appendChild(card);
+      current = card;
+
+      makeDraggable(card, {
+        onDrag: (el) => {
+          const eR = localRect(el);
+          const iR = localRect(inbox);
+          const tR = localRect(trash);
+          inbox.classList.toggle('hover', overlaps(eR, iR));
+          trash.classList.toggle('hover', overlaps(eR, tR));
+        },
+        onRelease: (el) => {
+          const eR = localRect(el);
+          const iR = localRect(inbox);
+          const tR = localRect(trash);
+          let placed = null;
+          if (overlaps(eR, iR)) placed = 'inbox';
+          else if (overlaps(eR, tR)) placed = 'trash';
+          if (placed) {
+            const isCorrect = (placed === 'inbox' && !data.virus) || (placed === 'trash' && data.virus);
+            if (placed === 'inbox' && data.virus) {
+              // CRITICAL FAIL: virus sorted to inbox
+              resolved = true;
+              SoundSynth.playLoseSound();
+              el.style.transition = 'transform 0.4s';
+              el.style.transform = 'scale(1.3)';
+              el.style.background = '#ff124f';
+              setTimeout(onLose, 600);
+              return;
+            }
+            if (isCorrect) {
+              correct++;
+              SoundSynth.playSnap();
+              spawnBurst(eR.cx, eR.cy, placed === 'inbox' ? '#39ff14' : '#ff124f');
+            } else {
+              SoundSynth.playDeflect();
+            }
+            el.style.transition = 'opacity 0.3s, transform 0.3s';
+            el.style.opacity = '0';
+            el.style.transform = 'scale(0.6)';
+            sorted++;
+            progress.textContent = `${t(this.progressLabel)} ${sorted} / ${emails.length}`;
+            setTimeout(() => {
+              el.remove();
+              inbox.classList.remove('hover');
+              trash.classList.remove('hover');
+              // Win condition: 3+ correct already?
+              if (correct >= 3 && !resolved) {
+                resolved = true;
+                setTimeout(onWin, 250);
+                return;
+              }
+              showNext();
+            }, 300);
+          }
+        }
+      });
+    };
+    showNext();
+    this._inbox = inbox; this._trash = trash;
+  },
+  cleanup() {}
+});
+
+/* ===== Mini-Game 5: Phishing Hook Cut ===== */
+MiniGames.push({
+  name: 'phishing-hook',
+  topic:  { en: 'PHISHING AWARENESS', es: 'CONCIENCIA SOBRE PHISHING' },
+  prompt: { en: 'CUT THE PHISHING HOOK!', es: '¡CORTA EL ANZUELO!' },
+  tipWin: {
+    en: 'Scammers use phishing hooks to steal your data with fake prize promises. If it looks too good to be true, cut the link!',
+    es: 'Los estafadores usan anzuelos para robar tus datos con falsas promesas de premios. ¡Si parece demasiado bueno para ser verdad, corta el enlace!'
+  },
+  tipLose: {
+    en: 'Scammers use phishing hooks to steal your data with fake prize promises. If it looks too good to be true, cut the link!',
+    es: 'Los estafadores usan anzuelos para robar tus datos con falsas promesas de premios. ¡Si parece demasiado bueno para ser verdad, corta el enlace!'
+  },
+  desc: {
+    en: 'Use the scissors cursor to click and cut the glowing cyan line!',
+    es: '¡Usa el cursor de tijeras para hacer clic y cortar la línea cian brillante!'
+  },
+  instr:    { en: 'CLICK THE GLOWING CYAN LINE TO SNIP IT!', es: '¡HAZ CLIC EN LA LÍNEA CIAN BRILLANTE PARA CORTARLA!' },
+  bait:     { en: '🎁 CLAIM PRIZE HERE 🎁',                  es: '🎁 RECLAMA TU PREMIO AQUÍ 🎁' },
+  baitSub:  { en: '100% FREE!',                              es: '¡100% GRATIS!' },
+  mount(area, onWin, onLose) {
+    area.classList.add('phish-mode'); // custom scissors cursor without renaming id
+
+    const instr = document.createElement('div');
+    instr.className = 'phish-instruction';
+    instr.textContent = t(this.instr);
+    area.appendChild(instr);
+
+    // The dangling line
+    const line = document.createElement('div');
+    line.className = 'phish-line';
+    line.dataset.testid = 'phish-line';
+    line.style.height = '240px';
+    line.style.top = '80px';
+    area.appendChild(line);
+
+    // Hook curve
+    const hook = document.createElement('div');
+    hook.className = 'phish-hook';
+    hook.style.top = '320px';
+    area.appendChild(hook);
+
+    // The bait button
+    const bait = document.createElement('div');
+    bait.className = 'phish-bait';
+    bait.dataset.testid = 'phish-bait';
+    bait.style.top = '360px';
+    bait.innerHTML = `${t(this.bait)}<br><span style="font-size:10px">${t(this.baitSub)}</span>`;
+    area.appendChild(bait);
+
+    // Scissors cursor (custom)
+    const scissors = document.createElement('div');
+    scissors.className = 'scissors-cursor';
+    scissors.innerHTML = `
+      <svg viewBox="0 0 32 32" width="40" height="40">
+        <circle cx="9" cy="22" r="5" fill="none" stroke="#ff2975" stroke-width="3"/>
+        <circle cx="23" cy="22" r="5" fill="none" stroke="#ff2975" stroke-width="3"/>
+        <line x1="13" y1="18" x2="28" y2="3" stroke="#00f0ff" stroke-width="3" stroke-linecap="round"/>
+        <line x1="19" y1="18" x2="4" y2="3"  stroke="#00f0ff" stroke-width="3" stroke-linecap="round"/>
+      </svg>`;
+    area.appendChild(scissors);
+
+    const moveCursor = (e) => {
+      const ar = area.getBoundingClientRect();
+      const scale = ar.width / 960;
+      scissors.style.left = ((e.clientX - ar.left) / scale - 20) + 'px';
+      scissors.style.top  = ((e.clientY - ar.top)  / scale - 20) + 'px';
+    };
+    area.addEventListener('mousemove', moveCursor);
+    this._moveCursor = moveCursor;
+    this._area = area;
+
+    let won = false;
+    // Clicking the line cuts it
+    const cutHandler = (e) => {
+      if (won) return;
+      won = true;
+      line.classList.add('cut');
+      bait.classList.add('dropped');
+      SoundSynth.playSnip();
+      const r = localRect(line);
+      spawnBurst(r.cx, r.cy, '#00f0ff');
+      setTimeout(onWin, 600);
+    };
+    line.addEventListener('click', cutHandler);
+    // Make line slightly bigger click target
+    line.style.padding = '0 8px';
+    line.style.boxSizing = 'content-box';
+
+    // Clicking the bait button = lose (taking the bait!)
+    bait.addEventListener('click', (e) => {
+      if (won) return;
+      won = true;
+      SoundSynth.playLoseSound();
+      bait.style.transform = 'translateX(-50%) scale(1.4)';
+      bait.style.background = '#ff124f';
+      setTimeout(onLose, 500);
+    });
+  },
+  cleanup() {
+    if (this._area && this._moveCursor) {
+      this._area.removeEventListener('mousemove', this._moveCursor);
+      this._area.classList.remove('phish-mode');
+    }
+  }
+});
+
+/* ---------------------------------------------------------
+   8. GAME FLOW CONTROLLER
+   --------------------------------------------------------- */
+function startNewGame() {
+  Game.history = [];
+  Game.lives = 3;
+  Game.roundsWon = 0;
+  Game.currentTimerSec = 15;
+  Game.miniGameQueue = shuffle(MiniGames.slice());
+  renderLives();
+  Screens.hud(true);
+  document.getElementById('round-label').textContent = `${t('round')} 1`;
+  nextRound();
+}
+
+function nextRound() {
+  if (Game.history.length >= 5 || Game.lives <= 0) {
+    showReviewScreen();
+    return;
+  }
+  if (Game.miniGameQueue.length === 0) {
+    Game.miniGameQueue = shuffle(MiniGames.slice()); // Re-shuffle when used up
+  }
+  Game.activeMiniGame = Game.miniGameQueue.shift();
+  document.getElementById('round-label').textContent = `${t('round')} ${Game.roundsWon + (3 - Game.lives) + 1}`;
+  showIntro();
+}
+
+function showIntro() {
+  const mg = Game.activeMiniGame;
+  document.getElementById('intro-prompt').textContent = t(mg.prompt);
+  document.getElementById('intro-topic').textContent  = t(mg.topic);
+  document.getElementById('intro-description').textContent = mg.desc ? t(mg.desc) : '';
+  // Loopable micro-video pixel-art demo for the action. We replace the
+  // whole demo wrapper so its CSS animations restart cleanly each round.
+  const oldTut = document.getElementById('intro-tutorial');
+  const demoHTML = buildDemoHTML(mg.name, Game.lang)
+    .replace('<div class="demo ',
+             '<div id="intro-tutorial" data-testid="intro-tutorial" class="demo ');
+  oldTut.outerHTML = demoHTML;
+  Screens.show('screen-intro');
+  Game.acceptInput = false;
+  setTimeout(() => {
+    startMiniGame();
+  }, 5000);
+}
+
+function startMiniGame() {
+  const mg = Game.activeMiniGame;
+  Screens.show('screen-game');
+  const area = document.getElementById('game-area');
+  area.innerHTML = '';
+  area.className = ''; // clear any mini-game-mode classes from previous round
+  area.style.cursor = 'default';
+  Game.acceptInput = true;
+  let finished = false;
+  const finish = (won) => {
+    if (finished) return;
+    finished = true;
+    Game.acceptInput = false;
+    Timer.stop();
+    mg.cleanup && mg.cleanup();
+    showFeedback(won, mg);
+  };
+  mg.mount(area, () => finish(true), () => finish(false));
+  Timer.start(Game.currentTimerSec, () => {
+    SoundSynth.playLoseSound();
+    finish(false);
+  });
+}
+
+function showFeedback(won, mg) {
+  Game.history.push({
+    name: t(mg.prompt),
+    won: won,
+    tip: won ? t(mg.tipWin) : t(mg.tipLose)
+  });
+  const result = document.getElementById('feedback-result');
+  result.textContent = won ? t('youWin') : t('ohNo');
+  result.className = 'result ' + (won ? 'win' : 'lose');
+  document.getElementById('feedback-tip').textContent = won ? t(mg.tipWin) : t(mg.tipLose);
+  
+  const feedbackImg = document.getElementById('feedback-image');
+  feedbackImg.src = mg.name + '.png';
+  if (mg.name === 'fake-news' || mg.name === 'inbox-cleaner') {
+    feedbackImg.style.width = '450px';
+    feedbackImg.style.marginLeft = '-40px';
+  } else {
+    feedbackImg.style.width = '250px';
+    feedbackImg.style.marginLeft = '0';
+  }
+  feedbackImg.onload = () => feedbackImg.style.display = 'block';
+  feedbackImg.onerror = () => feedbackImg.style.display = 'none';
+  if (won) {
+    SoundSynth.playWinSound();
+    Game.roundsWon++;
+    // Difficulty curve: 15 -> 10s, decrease 1s per win (floor 10)
+    Game.currentTimerSec = Math.max(10, 15 - Game.roundsWon);
+  } else {
+    Game.lives--;
+    renderLives();
+  }
+  // The Timer was already stopped in finish(). The tip overlay stays open
+  // until the player clicks NEXT — no auto-advance. This satisfies the
+  // "pause game timer entirely while tip is visible" requirement.
+  Screens.show('screen-feedback');
+}
+
+function showReviewScreen() {
+  Timer.stop();
+  Screens.hud(false);
+  const list = document.getElementById('review-list');
+  list.innerHTML = '';
+  const tipBox = document.getElementById('review-tip-box');
+  const tipText = document.getElementById('review-tip-text');
+  tipBox.classList.remove('active');
+  
+  Game.history.forEach(item => {
+    const btn = document.createElement('button');
+    btn.className = 'review-item ' + (item.won ? 'won' : 'lost');
+    btn.textContent = item.name;
+    btn.addEventListener('click', () => {
+      SoundSynth.playClickSound();
+      tipText.textContent = item.tip;
+      document.getElementById('review-tip-sprite').src = item.won ? 'bitty.png' : 'dizzy_bitty.png';
+      tipBox.classList.add('active');
+    });
+    list.appendChild(btn);
+  });
+  
+  Screens.show('screen-review');
+  SoundSynth.playGameOverSound();
+}
+
+function gameOver() {
+  Timer.stop();
+  Screens.hud(false);
+  document.getElementById('gameover-summary').textContent = t('survived', Game.roundsWon);
+  Screens.show('screen-gameover');
+  SoundSynth.playGameOverSound();
+}
+
+/* ---------------------------------------------------------
+   9. INPUT BINDINGS & INITIALIZATION
+   --------------------------------------------------------- */
+document.getElementById('btn-play').addEventListener('click', () => {
+  SoundSynth.resume();
+  SoundSynth.init();
+  SoundSynth.playClickSound();
+  startNewGame();
+});
+document.getElementById('btn-restart').addEventListener('click', () => {
+  SoundSynth.playClickSound();
+  startNewGame();
+});
+document.getElementById('btn-review-restart').addEventListener('click', () => {
+  SoundSynth.playClickSound();
+  startNewGame();
+});
+document.getElementById('btn-close-tip').addEventListener('click', () => {
+  SoundSynth.playClickSound();
+  document.getElementById('review-tip-box').classList.remove('active');
+});
+// Manual tip dismissal — game only advances when player clicks NEXT.
+document.getElementById('btn-next').addEventListener('click', () => {
+  SoundSynth.playClickSound();
+  nextRound();
+});
+// Language toggle on start screen — switches all UI text immediately.
+document.querySelectorAll('.lang-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    Game.lang = btn.dataset.lang;
+    SoundSynth.playClickSound();
+    applyLanguage();
+  });
+});
+// Initialize default language strings on load.
+applyLanguage();
+
+// Stage scaling on resize
+function fitStage() {
+  const stage = document.getElementById('stage');
+  const sx = window.innerWidth / 960;
+  const sy = window.innerHeight / 600;
+  const s = Math.min(sx, sy, 1);
+  stage.style.transform = `scale(${s})`;
+}
+window.addEventListener('resize', fitStage);
+fitStage();
+
+// First user gesture anywhere = init audio (browsers need this)
+window.addEventListener('pointerdown', () => SoundSynth.resume(), {once: true});
+
+// Expose dev hooks on window so external tooling/tests can drive the game.
+window.SoundSynth     = SoundSynth;
+window.Game           = Game;
+window.MiniGames      = MiniGames;
+window.Screens        = Screens;
+window.Timer          = Timer;
+window.I18N           = I18N;
+window.t              = t;
+window.applyLanguage  = applyLanguage;
+window.renderLives    = renderLives;
+window.startNewGame   = startNewGame;
+window.nextRound      = nextRound;
+
+</script>
+</body>
+</html>
