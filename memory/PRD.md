@@ -67,6 +67,20 @@ Create a fast-paced, educational WarioWare-style web micro-game titled "HackerWa
    - All 4 routes work: fake→trash=WIN, fake→verified=LOSE, true→verified=WIN, true→trash=LOSE
    - Sample content includes both new TRUE alerts (homework deadlines, field trip forms) and FAKE alerts (school-closed forever, free iPhones, ghost-hacking-wifi) in both EN and ES
 
+## What's Been Implemented (Jan 22, 2026) - 6 New Mini-Games (3 per category)
+- ✅ **App Permissions (Privacy)**: retro system-style popup; an innocent app (Flashlight, Calculator, Alarm Clock, etc.) requests a suspicious permission (Contacts, GPS, SMS). Win = DENY, Lose = ALLOW. 8 EN/ES trap combos.
+- ✅ **Think Before You Post (Citizenship)**: chat composer with a draft message; some have private info (address, school, phone), others are safe. Win = pick THINK for unsafe, POST for safe. 10 EN/ES posts.
+- ✅ **URL Detective (Dangers)**: shows 4 URLs — 1 real + 3 typosquatted fakes (g00gle.com, googel.com, etc.). Click the real one to win, any fake = lose. 6 site pools (YouTube, Google, Amazon, Netflix, Wikipedia, Spotify).
+- ✅ **Download Warning (Dangers)**: orange-titlebar dialog showing a shady download (free_robux_GENERATOR.exe, family_photo.jpg.exe, etc.). Always pick CANCEL to win. 7 EN/ES trap files.
+- ✅ **Screen Lock (Privacy)**: drag-and-drop a padlock onto the unlocked phone before the "snoop emoji" walks across (12s anim). Snap detection via overlaps(). Loses if snoop reaches the phone.
+- ✅ **2FA Quiz (Privacy)**: random 4-digit code shown in a notification card; 4 input slots + pixel numeric keypad. Type each digit correctly to win; wrong digit = lose.
+- ✅ **Cookies Banner (Privacy)**: faux browser window with cookie banner sliding up from the bottom. Win = ONLY NECESSARY, Lose = ACCEPT ALL. 5 EN/ES fake site domains for flavor.
+
+### Category Distribution (now 12 mini-games total)
+- 🟪 **Citizenship (3)**: fake-news, meme-shield, think-before-post
+- 🟥 **Dangers (4)**: phishing-hook, inbox-cleaner, url-detective, download-warning
+- 🟩 **Privacy (5)**: password-puzzle, app-permissions, screen-lock, tfa-quiz, cookies-banner
+
 ## Backlog / Future Enhancements (P2)
 - Differentiate `tipWin` vs `tipLose` text per mini-game for stronger learning reinforcement on losses
 - Refactor `localRect()` and `spawnBurst()` to accept area element as parameter (more robust than getElementById)

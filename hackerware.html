@@ -1158,6 +1158,614 @@ body {
   100% { transform: translate(0, 0) scale(1); }
 }
 
+/* =========================================================
+   NEW MINI-GAMES STYLES (think-before-post, url-detective,
+   download-warning, screen-lock, 2fa-quiz, cookies-banner)
+   ========================================================= */
+
+/* ---- Think Before You Post ---- */
+.post-instruction {
+  position: absolute;
+  top: 18px; left: 50%; transform: translateX(-50%);
+  font-size: 11px; color: var(--title-1);
+  letter-spacing: 1.5px; text-align: center;
+  max-width: 880px; line-height: 1.4;
+}
+.post-composer {
+  position: absolute;
+  top: 80px; left: 50%; transform: translateX(-50%);
+  width: 520px;
+  background: var(--surface);
+  border: 5px solid var(--ink);
+  box-shadow: 8px 8px 0 var(--neon-pink), 8px 8px 0 5px var(--ink);
+  animation: postSlideIn 0.4s ease-out;
+}
+@keyframes postSlideIn {
+  from { transform: translate(-50%, -30px); opacity: 0; }
+  to   { transform: translate(-50%, 0);     opacity: 1; }
+}
+.post-header {
+  background: #1da1f2;
+  color: var(--text-light);
+  padding: 8px 14px;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 10px;
+  letter-spacing: 1.5px;
+  border-bottom: 4px solid var(--ink);
+  display: flex; align-items: center; gap: 10px;
+}
+.post-avatar {
+  width: 32px; height: 32px;
+  background: var(--neon-yellow);
+  border: 2px solid var(--ink);
+  font-size: 22px; line-height: 28px; text-align: center;
+}
+.post-body {
+  padding: 22px 24px 18px;
+  font-family: 'VT323', monospace;
+  font-size: 26px;
+  color: var(--ink);
+  line-height: 1.3;
+  min-height: 120px;
+}
+.post-buttons {
+  display: flex; gap: 16px; padding: 12px 20px 22px; justify-content: center;
+}
+.post-btn {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 13px; letter-spacing: 2px;
+  padding: 14px 22px; border: 4px solid var(--ink);
+  cursor: pointer; color: var(--ink);
+  box-shadow: 5px 5px 0 var(--ink);
+  transition: transform 0.08s, box-shadow 0.08s;
+  min-width: 180px;
+}
+.post-btn:hover { transform: translate(-1px,-1px); box-shadow: 6px 6px 0 var(--ink); }
+.post-btn:active { transform: translate(3px,3px); box-shadow: 2px 2px 0 var(--ink); }
+.post-btn.post  { background: var(--neon-cyan); color: var(--ink); }
+.post-btn.think { background: var(--neon-yellow); color: var(--ink); }
+.post-composer.correct { animation: permCorrectFlash 0.5s ease-out forwards; }
+.post-composer.wrong   { animation: permWrongShake 0.5s ease-in-out forwards; }
+
+/* ---- URL Detective ---- */
+.url-instruction {
+  position: absolute;
+  top: 20px; left: 50%; transform: translateX(-50%);
+  font-size: 12px; color: var(--title-1);
+  letter-spacing: 1.5px; text-align: center;
+  max-width: 880px; line-height: 1.4;
+}
+.url-browser-bar {
+  position: absolute;
+  top: 90px; left: 50%; transform: translateX(-50%);
+  width: 620px;
+  background: var(--surface);
+  border: 4px solid var(--ink);
+  padding: 8px 14px;
+  font-family: 'VT323', monospace;
+  font-size: 20px;
+  color: var(--ink-soft);
+  display: flex; align-items: center; gap: 8px;
+  box-shadow: 4px 4px 0 var(--neon-pink);
+}
+.url-browser-bar .lock-icon {
+  width: 22px; height: 22px;
+  background: var(--neon-yellow);
+  border: 2px solid var(--ink);
+  font-size: 14px; text-align: center; line-height: 18px;
+}
+.url-target-text {
+  position: absolute;
+  top: 150px; left: 50%; transform: translateX(-50%);
+  font-family: 'Press Start 2P', monospace;
+  font-size: 12px; color: var(--neon-pink);
+  letter-spacing: 1.5px;
+}
+.url-grid {
+  position: absolute;
+  top: 200px; left: 50%; transform: translateX(-50%);
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 18px;
+  width: 720px;
+}
+.url-card {
+  background: var(--surface);
+  border: 4px solid var(--ink);
+  padding: 18px 16px;
+  font-family: 'VT323', monospace;
+  font-size: 28px;
+  color: var(--ink);
+  text-align: center;
+  cursor: pointer;
+  box-shadow: 5px 5px 0 var(--neon-cyan);
+  letter-spacing: 1px;
+  transition: transform 0.1s;
+  user-select: text;
+}
+.url-card:hover { transform: translate(-2px,-2px); box-shadow: 7px 7px 0 var(--neon-cyan); }
+.url-card.correct { background: var(--neon-green); animation: urlCorrect 0.5s ease-out forwards; }
+.url-card.wrong   { background: var(--neon-red); color: var(--text-light); animation: urlWrong 0.4s ease-in-out forwards; }
+@keyframes urlCorrect { 50% { transform: scale(1.15); } 100% { transform: scale(1); } }
+@keyframes urlWrong {
+  0%,100% { transform: translateX(0); }
+  25% { transform: translateX(-8px); }
+  75% { transform: translateX(8px); }
+}
+
+/* ---- Download Warning (reuses perm-* styles, just new accents) ---- */
+.dl-file-icon {
+  display: inline-block;
+  width: 80px; height: 80px;
+  background: var(--surface-alt);
+  border: 4px solid var(--neon-orange);
+  font-size: 44px;
+  line-height: 76px; text-align: center;
+  margin-bottom: 12px;
+  box-shadow: 4px 4px 0 var(--ink);
+}
+.dl-filename {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 13px;
+  color: var(--neon-red);
+  letter-spacing: 1px;
+  padding: 10px 14px;
+  background: #fff3e0;
+  border: 3px solid var(--neon-orange);
+  display: inline-block;
+  margin: 4px 0 14px;
+  box-shadow: 3px 3px 0 var(--ink);
+  word-break: break-all;
+}
+.dl-size {
+  font-family: 'VT323', monospace;
+  font-size: 18px;
+  color: var(--ink-soft);
+  margin-bottom: 14px;
+}
+.dl-btn.continue { background: var(--neon-red);   color: var(--text-light); }
+.dl-btn.cancel   { background: var(--neon-green); color: var(--ink); }
+
+/* ---- Screen Lock ---- */
+.lock-instruction {
+  position: absolute;
+  top: 18px; left: 50%; transform: translateX(-50%);
+  font-size: 11px; color: var(--title-1);
+  letter-spacing: 1.5px; text-align: center;
+  max-width: 880px; line-height: 1.4;
+}
+.lock-phone {
+  position: absolute;
+  top: 60px; left: 50%; transform: translateX(-50%);
+  width: 260px; height: 380px;
+  background: var(--bg-deep);
+  border: 8px solid var(--ink);
+  border-radius: 28px;
+  padding: 16px 12px;
+  box-shadow: 0 0 0 4px var(--neon-cyan), 8px 8px 0 var(--neon-pink);
+}
+.lock-phone.locked { background: var(--ink); border-color: var(--neon-green); }
+.lock-phone-screen {
+  width: 100%; height: 100%;
+  background: linear-gradient(180deg, #2a1a4a, #4a2a6a);
+  border: 2px solid var(--neon-cyan);
+  padding: 10px;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  align-content: start;
+}
+.lock-app-tile {
+  background: var(--surface-alt);
+  border: 2px solid var(--ink);
+  font-size: 20px;
+  text-align: center;
+  padding: 6px 0;
+  font-family: 'VT323', monospace;
+  color: var(--ink);
+}
+.lock-phone.locked .lock-phone-screen {
+  background: var(--bg-deep);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 64px; color: var(--neon-green);
+}
+.lock-phone.locked .lock-app-tile { display: none; }
+.lock-spy {
+  position: absolute;
+  bottom: 20px; left: -120px;
+  width: 80px; height: 80px;
+  font-size: 60px;
+  animation: spyApproach 12s linear forwards;
+  z-index: 10;
+}
+@keyframes spyApproach {
+  from { left: -120px; }
+  to   { left: 380px; }
+}
+.lock-pad {
+  position: absolute;
+  bottom: 60px; left: 80px;
+  width: 90px; height: 110px;
+  background: var(--neon-yellow);
+  border: 5px solid var(--ink);
+  font-size: 56px;
+  text-align: center;
+  line-height: 100px;
+  cursor: grab;
+  box-shadow: 6px 6px 0 var(--ink);
+  z-index: 50;
+}
+.lock-pad.dragging { cursor: grabbing; }
+.lock-target-hint {
+  position: absolute;
+  bottom: 30px; left: 60px;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 9px;
+  color: var(--neon-pink);
+  letter-spacing: 1px;
+  width: 130px;
+  text-align: center;
+}
+
+/* ---- 2FA Quiz ---- */
+.tfa-instruction {
+  position: absolute;
+  top: 18px; left: 50%; transform: translateX(-50%);
+  font-size: 11px; color: var(--title-1);
+  letter-spacing: 1.5px; text-align: center;
+  max-width: 880px; line-height: 1.4;
+}
+.tfa-notification {
+  position: absolute;
+  top: 60px; left: 60px;
+  width: 280px;
+  background: var(--surface);
+  border: 4px solid var(--neon-cyan);
+  padding: 12px 14px;
+  box-shadow: 5px 5px 0 var(--neon-pink);
+  animation: tfaNotifPulse 1.5s ease-in-out infinite alternate;
+}
+@keyframes tfaNotifPulse {
+  from { box-shadow: 5px 5px 0 var(--neon-pink), 0 0 0 rgba(0,240,255,0); }
+  to   { box-shadow: 5px 5px 0 var(--neon-pink), 0 0 24px rgba(0,240,255,0.6); }
+}
+.tfa-notif-header {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 9px;
+  color: var(--title-1);
+  letter-spacing: 1.5px;
+  padding-bottom: 6px;
+  border-bottom: 2px solid var(--ink);
+  margin-bottom: 8px;
+}
+.tfa-notif-text {
+  font-family: 'VT323', monospace;
+  font-size: 18px;
+  color: var(--ink);
+  margin-bottom: 8px;
+  line-height: 1.2;
+}
+.tfa-code {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 28px;
+  color: var(--neon-pink);
+  letter-spacing: 8px;
+  text-align: center;
+  padding: 8px 0;
+  background: var(--surface-alt);
+  border: 3px solid var(--ink);
+}
+.tfa-login {
+  position: absolute;
+  top: 60px; right: 60px;
+  width: 320px;
+  background: var(--surface);
+  border: 4px solid var(--ink);
+  padding: 16px;
+  box-shadow: 5px 5px 0 var(--neon-cyan);
+}
+.tfa-login-title {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 10px;
+  color: var(--title-1);
+  letter-spacing: 1.5px;
+  margin-bottom: 12px;
+  text-align: center;
+}
+.tfa-slots {
+  display: flex; gap: 10px; justify-content: center; margin: 14px 0;
+}
+.tfa-slot {
+  width: 48px; height: 56px;
+  background: var(--surface-alt);
+  border: 3px solid var(--neon-cyan);
+  font-family: 'Press Start 2P', monospace;
+  font-size: 22px;
+  color: var(--ink);
+  display: flex; align-items: center; justify-content: center;
+}
+.tfa-slot.active { border-color: var(--neon-pink); animation: tfaSlotPulse 0.5s ease-in-out infinite alternate; }
+.tfa-slot.filled { background: var(--neon-green); }
+@keyframes tfaSlotPulse { to { box-shadow: 0 0 12px var(--neon-pink); } }
+.tfa-keypad {
+  position: absolute;
+  bottom: 50px; left: 50%; transform: translateX(-50%);
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  width: 240px;
+}
+.tfa-key {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 18px;
+  background: var(--neon-yellow);
+  border: 4px solid var(--ink);
+  color: var(--ink);
+  padding: 14px 0;
+  cursor: pointer;
+  text-align: center;
+  box-shadow: 4px 4px 0 var(--ink);
+  transition: transform 0.08s, box-shadow 0.08s;
+}
+.tfa-key:hover { transform: translate(-1px,-1px); box-shadow: 5px 5px 0 var(--ink); }
+.tfa-key:active { transform: translate(2px,2px); box-shadow: 2px 2px 0 var(--ink); }
+.tfa-key.wrong { background: var(--neon-red); color: var(--text-light); animation: permWrongShake 0.4s; }
+
+/* ---- Cookies Banner ---- */
+.cookie-browser {
+  position: absolute;
+  top: 60px; left: 50%; transform: translateX(-50%);
+  width: 720px; height: 380px;
+  background: var(--surface);
+  border: 5px solid var(--ink);
+  box-shadow: 8px 8px 0 var(--neon-cyan), 8px 8px 0 5px var(--ink);
+  overflow: hidden;
+}
+.cookie-browser-bar {
+  background: var(--surface-alt);
+  border-bottom: 3px solid var(--ink);
+  padding: 8px 14px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: 'VT323', monospace;
+  font-size: 18px;
+  color: var(--ink-soft);
+}
+.cookie-browser-bar .dot { width: 12px; height: 12px; border-radius: 50%; border: 2px solid var(--ink); }
+.cookie-browser-bar .dot.r { background: var(--neon-red); }
+.cookie-browser-bar .dot.y { background: var(--neon-yellow); }
+.cookie-browser-bar .dot.g { background: var(--neon-green); }
+.cookie-browser-bar .url-text {
+  flex: 1; background: var(--surface); border: 2px solid var(--ink); padding: 2px 10px;
+  font-size: 16px;
+}
+.cookie-page {
+  padding: 20px;
+  font-family: 'VT323', monospace;
+  font-size: 22px;
+  color: var(--ink-soft);
+  line-height: 1.3;
+  background: repeating-linear-gradient(45deg, var(--surface), var(--surface) 10px, var(--surface-alt) 10px, var(--surface-alt) 20px);
+  height: calc(100% - 42px);
+}
+.cookie-banner {
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  background: var(--ink);
+  color: var(--text-light);
+  padding: 16px 20px;
+  border-top: 5px solid var(--neon-yellow);
+  animation: cookieSlideUp 0.5s ease-out;
+}
+@keyframes cookieSlideUp {
+  from { transform: translateY(100%); }
+  to   { transform: translateY(0); }
+}
+.cookie-banner-row { display: flex; align-items: center; gap: 14px; }
+.cookie-icon {
+  font-size: 36px;
+  flex-shrink: 0;
+  animation: cookieWobble 1.2s ease-in-out infinite;
+}
+@keyframes cookieWobble { 50% { transform: rotate(15deg); } }
+.cookie-text {
+  font-family: 'VT323', monospace;
+  font-size: 18px;
+  line-height: 1.2;
+  flex: 1;
+}
+.cookie-buttons { display: flex; gap: 10px; }
+.cookie-btn {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 10px;
+  letter-spacing: 1px;
+  padding: 12px 14px;
+  border: 3px solid var(--text-light);
+  cursor: pointer;
+  white-space: nowrap;
+  box-shadow: 3px 3px 0 var(--neon-pink);
+  transition: transform 0.08s, box-shadow 0.08s;
+}
+.cookie-btn:hover { transform: translate(-1px,-1px); box-shadow: 4px 4px 0 var(--neon-pink); }
+.cookie-btn:active { transform: translate(2px,2px); box-shadow: 1px 1px 0 var(--neon-pink); }
+.cookie-btn.accept { background: var(--neon-red); color: var(--text-light); }
+.cookie-btn.necessary { background: var(--neon-green); color: var(--ink); border-color: var(--ink); }
+
+/* ---- Demos for new mini-games (intro tutorial loops) ---- */
+.demo-post .d-card {
+  position: absolute; top: 20px; left: 50%; transform: translateX(-50%);
+  width: 280px; background: var(--surface);
+  border: 3px solid var(--ink); box-shadow: 4px 4px 0 var(--neon-pink);
+}
+.demo-post .d-card-header {
+  background: #1da1f2; color: var(--text-light);
+  font-family: 'Press Start 2P', monospace;
+  font-size: 8px; padding: 4px 6px; border-bottom: 2px solid var(--ink);
+}
+.demo-post .d-card-body {
+  font-family: 'VT323', monospace; font-size: 14px;
+  color: var(--ink); padding: 8px;
+}
+.demo-post .d-card-btns { display: flex; gap: 6px; padding: 4px 6px 8px; }
+.demo-post .d-card-btn {
+  font-family: 'Press Start 2P', monospace; font-size: 7px;
+  border: 2px solid var(--ink); padding: 4px 5px;
+  box-shadow: 2px 2px 0 var(--ink);
+}
+.demo-post .d-card-btn.post  { background: var(--neon-cyan); color: var(--ink); }
+.demo-post .d-card-btn.think { background: var(--neon-yellow); color: var(--ink); animation: dDenyHL 1.4s ease-in-out infinite; }
+.demo-post .demo-cursor { top: 110px; left: 90px; animation: dCursorPerm 1.4s ease-in-out infinite; }
+
+.demo-url .d-grid {
+  position: absolute; top: 18px; left: 50%; transform: translateX(-50%);
+  display: grid; grid-template-columns: 1fr 1fr; gap: 6px; width: 280px;
+}
+.demo-url .d-url {
+  background: var(--surface); border: 2px solid var(--ink);
+  padding: 8px 4px; font-family: 'VT323', monospace; font-size: 14px;
+  color: var(--ink); text-align: center;
+  box-shadow: 2px 2px 0 var(--neon-cyan);
+}
+.demo-url .d-url.real { background: var(--neon-green); animation: dDenyHL 1.4s ease-in-out infinite; }
+.demo-url .demo-cursor { top: 50px; left: 130px; animation: dCursorUrl 1.4s ease-in-out infinite; }
+@keyframes dCursorUrl {
+  0%, 30% { transform: translate(60px, 0) scale(1); }
+  60% { transform: translate(-60px, 50px) scale(1); }
+  70% { transform: translate(-60px, 50px) scale(0.8); }
+  85% { transform: translate(-60px, 50px) scale(1); }
+  100% { transform: translate(60px, 0) scale(1); }
+}
+
+.demo-dl .d-window {
+  position: absolute; top: 20px; left: 50%; transform: translateX(-50%);
+  width: 280px; background: var(--surface);
+  border: 3px solid var(--ink); box-shadow: 4px 4px 0 var(--neon-pink);
+}
+.demo-dl .d-titlebar {
+  background: var(--neon-orange); color: var(--ink);
+  font-family: 'Press Start 2P', monospace; font-size: 8px;
+  padding: 4px 6px; letter-spacing: 1px; border-bottom: 2px solid var(--ink);
+}
+.demo-dl .d-body {
+  padding: 8px; font-family: 'VT323', monospace; font-size: 14px;
+  color: var(--ink); text-align: center;
+}
+.demo-dl .d-filename {
+  font-family: 'Press Start 2P', monospace; font-size: 7px;
+  background: #fff3e0; border: 2px solid var(--neon-orange);
+  color: var(--neon-red); padding: 4px 6px; margin: 4px 0;
+  display: inline-block; letter-spacing: 1px;
+}
+.demo-dl .d-btn-row { display: flex; justify-content: center; gap: 6px; }
+.demo-dl .d-btn {
+  font-family: 'Press Start 2P', monospace; font-size: 7px;
+  border: 2px solid var(--ink); padding: 4px 5px;
+  box-shadow: 2px 2px 0 var(--ink); letter-spacing: 1px;
+}
+.demo-dl .d-btn.continue { background: var(--neon-red); color: var(--text-light); }
+.demo-dl .d-btn.cancel   { background: var(--neon-green); color: var(--ink); animation: dDenyHL 1.4s ease-in-out infinite; }
+.demo-dl .demo-cursor { top: 105px; left: 95px; animation: dCursorPerm 1.4s ease-in-out infinite; }
+
+.demo-lock .d-phone {
+  position: absolute; top: 16px; left: 60%;
+  width: 90px; height: 130px;
+  background: var(--bg-deep); border: 3px solid var(--neon-cyan);
+  border-radius: 10px; padding: 6px;
+}
+.demo-lock .d-phone-screen {
+  width: 100%; height: 100%;
+  background: #2a1a4a; border: 1px solid var(--neon-cyan);
+}
+.demo-lock .d-pad {
+  position: absolute; top: 60px; left: 30px;
+  width: 36px; height: 44px;
+  background: var(--neon-yellow); border: 2px solid var(--ink);
+  font-size: 24px; text-align: center; line-height: 38px;
+  box-shadow: 2px 2px 0 var(--ink);
+  animation: dLockDrag 2.2s ease-in-out infinite;
+}
+@keyframes dLockDrag {
+  0%, 15% { transform: translate(0, 0); }
+  50%, 70% { transform: translate(170px, -20px); }
+  100% { transform: translate(0, 0); }
+}
+.demo-lock .demo-cursor { top: 70px; left: 50px; animation: dLockCursor 2.2s ease-in-out infinite; }
+@keyframes dLockCursor {
+  0%, 15% { transform: translate(0, 0) scale(1); }
+  20% { transform: translate(0, 0) scale(0.8); }
+  50%, 70% { transform: translate(170px, -20px) scale(0.8); }
+  80% { transform: translate(170px, -20px) scale(1); }
+  100% { transform: translate(0, 0) scale(1); }
+}
+
+.demo-tfa .d-notif {
+  position: absolute; top: 18px; left: 20px;
+  width: 150px; background: var(--surface);
+  border: 2px solid var(--neon-cyan); padding: 6px;
+  box-shadow: 3px 3px 0 var(--neon-pink);
+}
+.demo-tfa .d-notif-code {
+  font-family: 'Press Start 2P', monospace; font-size: 14px;
+  color: var(--neon-pink); letter-spacing: 4px;
+  text-align: center; padding: 4px;
+  background: var(--surface-alt); border: 2px solid var(--ink); margin-top: 4px;
+}
+.demo-tfa .d-notif-label {
+  font-family: 'Press Start 2P', monospace; font-size: 7px;
+  color: var(--title-1); text-align: center;
+}
+.demo-tfa .d-slots {
+  position: absolute; top: 60px; right: 30px;
+  display: flex; gap: 4px;
+}
+.demo-tfa .d-slot {
+  width: 22px; height: 28px; background: var(--surface-alt);
+  border: 2px solid var(--neon-cyan);
+  font-family: 'Press Start 2P', monospace; font-size: 10px;
+  color: var(--ink); display: flex; align-items: center; justify-content: center;
+  animation: dSlotFill 2s steps(4) infinite;
+}
+.demo-tfa .d-slot:nth-child(1) { animation-delay: 0s; }
+.demo-tfa .d-slot:nth-child(2) { animation-delay: 0.5s; }
+.demo-tfa .d-slot:nth-child(3) { animation-delay: 1s; }
+.demo-tfa .d-slot:nth-child(4) { animation-delay: 1.5s; }
+@keyframes dSlotFill {
+  0%, 60% { background: var(--surface-alt); }
+  70%, 100% { background: var(--neon-green); }
+}
+.demo-tfa .demo-cursor { top: 110px; right: 140px; animation: dTfaCursor 2s linear infinite; }
+@keyframes dTfaCursor {
+  0%   { transform: translate(0, 0); }
+  100% { transform: translate(80px, -40px); }
+}
+
+.demo-cookie .d-banner {
+  position: absolute; bottom: 16px; left: 50%; transform: translateX(-50%);
+  width: 300px; background: var(--ink);
+  color: var(--text-light); padding: 8px 10px;
+  border-top: 3px solid var(--neon-yellow);
+  display: flex; align-items: center; gap: 6px;
+}
+.demo-cookie .d-cookie-icon { font-size: 18px; animation: cookieWobble 1.2s ease-in-out infinite; }
+.demo-cookie .d-cookie-text {
+  font-family: 'VT323', monospace; font-size: 11px; flex: 1; line-height: 1.1;
+}
+.demo-cookie .d-c-btn {
+  font-family: 'Press Start 2P', monospace; font-size: 6px;
+  padding: 3px 4px; border: 2px solid var(--text-light); letter-spacing: 1px;
+}
+.demo-cookie .d-c-btn.accept { background: var(--neon-red); color: var(--text-light); }
+.demo-cookie .d-c-btn.nec    { background: var(--neon-green); color: var(--ink); border-color: var(--ink); animation: dDenyHL 1.4s ease-in-out infinite; }
+.demo-cookie .demo-cursor { bottom: 18px; right: 30px; animation: dCookieCursor 1.6s ease-in-out infinite; }
+@keyframes dCookieCursor {
+  0%, 30% { transform: translate(0, 0) scale(1); }
+  60% { transform: translate(-50px, 0) scale(1); }
+  70% { transform: translate(-50px, 0) scale(0.8); }
+  85% { transform: translate(-50px, 0) scale(1); }
+  100% { transform: translate(0, 0) scale(1); }
+}
+
 /* ===== Particle FX ===== */
 .fx-particle {
   position: absolute;
@@ -1772,6 +2380,77 @@ function buildDemoHTML(name, lang) {
           </div>
           <div class="demo-cursor">${CURSOR_SVG}</div>
         </div>`;
+    case 'think-before-post':
+      return `
+        <div class="demo demo-post">
+          <div class="d-card">
+            <div class="d-card-header">@${lang === 'es' ? 'yo' : 'me'} · ${lang === 'es' ? 'POST' : 'POST'}</div>
+            <div class="d-card-body">${lang === 'es' ? '"Estoy solo en casa..."' : '"Home alone all weekend..."'}</div>
+            <div class="d-card-btns">
+              <div class="d-card-btn post">${lang === 'es' ? 'POSTEAR' : 'POST'}</div>
+              <div class="d-card-btn think">${lang === 'es' ? 'PENSAR' : 'THINK'}</div>
+            </div>
+          </div>
+          <div class="demo-cursor">${CURSOR_SVG}</div>
+        </div>`;
+    case 'url-detective':
+      return `
+        <div class="demo demo-url">
+          <div class="d-grid">
+            <div class="d-url">y0utube.com</div>
+            <div class="d-url real">youtube.com</div>
+            <div class="d-url">youtub3.com</div>
+            <div class="d-url">youtube.co</div>
+          </div>
+          <div class="demo-cursor">${CURSOR_SVG}</div>
+        </div>`;
+    case 'download-warning':
+      return `
+        <div class="demo demo-dl">
+          <div class="d-window">
+            <div class="d-titlebar">⬇ ${lang === 'es' ? 'DESCARGA' : 'DOWNLOAD'}</div>
+            <div class="d-body">
+              <div style="font-size:24px">💎</div>
+              <div class="d-filename">free.exe</div>
+              <div class="d-btn-row">
+                <div class="d-btn continue">${lang === 'es' ? 'CONTINUAR' : 'CONTINUE'}</div>
+                <div class="d-btn cancel">${lang === 'es' ? 'CANCELAR' : 'CANCEL'}</div>
+              </div>
+            </div>
+          </div>
+          <div class="demo-cursor">${CURSOR_SVG}</div>
+        </div>`;
+    case 'screen-lock':
+      return `
+        <div class="demo demo-lock">
+          <div class="d-phone"><div class="d-phone-screen"></div></div>
+          <div class="d-pad">🔒</div>
+          <div class="demo-cursor">${CURSOR_SVG}</div>
+        </div>`;
+    case 'tfa-quiz':
+      return `
+        <div class="demo demo-tfa">
+          <div class="d-notif">
+            <div class="d-notif-label">${lang === 'es' ? 'CÓDIGO' : 'CODE'}</div>
+            <div class="d-notif-code">7392</div>
+          </div>
+          <div class="d-slots">
+            <div class="d-slot">7</div><div class="d-slot">3</div>
+            <div class="d-slot">9</div><div class="d-slot">2</div>
+          </div>
+          <div class="demo-cursor">${CURSOR_SVG}</div>
+        </div>`;
+    case 'cookies-banner':
+      return `
+        <div class="demo demo-cookie">
+          <div class="d-banner">
+            <div class="d-cookie-icon">🍪</div>
+            <div class="d-cookie-text">${lang === 'es' ? '¿Aceptar cookies?' : 'Accept cookies?'}</div>
+            <div class="d-c-btn accept">${lang === 'es' ? 'TODO' : 'ALL'}</div>
+            <div class="d-c-btn nec">${lang === 'es' ? 'SOLO NEC.' : 'ONLY NEC.'}</div>
+          </div>
+          <div class="demo-cursor">${CURSOR_SVG}</div>
+        </div>`;
     default:
       return '';
   }
@@ -2005,6 +2684,602 @@ MiniGames.push({
   cleanup() {
     if (this._area) this._area.classList.remove('perm-mode');
   }
+});
+
+/* ===== Mini-Game: Think Before You Post (CITIZENSHIP) =====
+   Shows a post composer with a draft message. Some posts are safe
+   (no personal info), others leak personal data. Player picks
+   POSTEAR (post) for safe, PENSAR (think first) for unsafe.
+*/
+MiniGames.push({
+  name: 'think-before-post',
+  topic:  { en: 'DIGITAL FOOTPRINT', es: 'HUELLA DIGITAL' },
+  prompt: { en: 'POST IT OR THINK?',  es: '¿LO POSTEO O LO PIENSO?' },
+  tipWin: {
+    en: 'Once you post something online, it stays there forever. Never share your address, school, phone or photos that reveal where you live.',
+    es: 'Lo que publicas en internet se queda para siempre. Nunca compartas tu dirección, escuela, teléfono ni fotos que muestren dónde vives.'
+  },
+  tipLose: {
+    en: 'Careful! Posting personal info can be dangerous. Before you post, ask: would a stranger learn something private from this?',
+    es: '¡Cuidado! Publicar información personal puede ser peligroso. Antes de postear, pregunta: ¿un desconocido aprendería algo privado con esto?'
+  },
+  desc: {
+    en: 'Read the post. If it has private info (address, school, phone), tap THINK. If it is safe, tap POST!',
+    es: 'Lee el post. Si tiene info privada (dirección, escuela, teléfono), toca PENSAR. Si es seguro, ¡toca POSTEAR!'
+  },
+  instr: {
+    en: 'IF THE POST HAS PRIVATE INFO → THINK. IF IT IS SAFE → POST.',
+    es: 'SI EL POST TIENE INFO PRIVADA → PENSAR. SI ES SEGURO → POSTEAR.'
+  },
+  pool: [
+    // UNSAFE — personal info
+    { safe: false, text: { en: '🏠 Mom and Dad went away! I am alone at home all weekend, who wants to come over?',
+                            es: '🏠 ¡Mis papás se fueron! Estoy solo en casa todo el finde, ¿quién viene?' } },
+    { safe: false, text: { en: '🏫 New uniform from Lincoln Elementary School! Class 4B looks awesome',
+                            es: '🏫 ¡Uniforme nuevo de la Escuela Lincoln! El 4to B se ve genial' } },
+    { safe: false, text: { en: '📞 New phone! Save my number: 555-3421. Text me anytime!',
+                            es: '📞 ¡Celu nuevo! Guarden mi número: 555-3421. ¡Escríbanme!' } },
+    { safe: false, text: { en: '📍 Live from my house at 42 Maple Street! Come visit anytime',
+                            es: '📍 ¡En vivo desde mi casa en Calle Sol 42! Vengan cuando quieran' } },
+    { safe: false, text: { en: '🎂 Just turned 9! Here is my full name and birthday: 03/15/2017',
+                            es: '🎂 ¡Cumplí 9! Mi nombre completo y cumpleaños: 15/03/2017' } },
+    // SAFE — just a thought
+    { safe: true,  text: { en: '🎬 The new dinosaur movie was AMAZING! 5 stars from me 🦖',
+                            es: '🎬 ¡La nueva peli de dinosaurios estuvo INCREÍBLE! 5 estrellas 🦖' } },
+    { safe: true,  text: { en: '⚽ Great soccer game today! My team played awesome',
+                            es: '⚽ ¡Qué buen partido hoy! Mi equipo jugó genial' } },
+    { safe: true,  text: { en: '🌅 Today\'s sunset was the prettiest I have ever seen',
+                            es: '🌅 El atardecer de hoy fue el más bonito que he visto' } },
+    { safe: true,  text: { en: '🎉 Happy birthday to my best friend! Wishing you the best',
+                            es: '🎉 ¡Feliz cumple a mi mejor amigo! Te deseo lo mejor' } },
+    { safe: true,  text: { en: '📚 Just finished an awesome book about space adventures!',
+                            es: '📚 ¡Acabo de leer un libro genial sobre aventuras en el espacio!' } },
+  ],
+  labels: {
+    user:   { en: '@me_user', es: '@yo_usuario' },
+    postBtn:{ en: 'POST',     es: 'POSTEAR'    },
+    thinkBtn:{en: 'THINK',    es: 'PENSAR'    },
+  },
+  mount(area, onWin, onLose) {
+    const item = pick(this.pool);
+    const L = this.labels;
+
+    const instr = document.createElement('div');
+    instr.className = 'post-instruction';
+    instr.textContent = t(this.instr);
+    area.appendChild(instr);
+
+    const composer = document.createElement('div');
+    composer.className = 'post-composer';
+    composer.dataset.testid = 'post-composer';
+    composer.dataset.safe = item.safe ? '1' : '0';
+    composer.innerHTML = `
+      <div class="post-header">
+        <div class="post-avatar">🐱</div>
+        <div>${t(L.user)}</div>
+      </div>
+      <div class="post-body" data-testid="post-body">${t(item.text)}</div>
+      <div class="post-buttons">
+        <button class="post-btn think" data-testid="post-think-btn">${t(L.thinkBtn)}</button>
+        <button class="post-btn post"  data-testid="post-post-btn">${t(L.postBtn)}</button>
+      </div>`;
+    area.appendChild(composer);
+
+    let resolved = false;
+    const resolve = (correct) => {
+      if (resolved) return;
+      resolved = true;
+      if (correct) {
+        SoundSynth.playSnap();
+        composer.classList.add('correct');
+        const r = localRect(composer);
+        spawnBurst(r.cx, r.cy, '#39ff14');
+        setTimeout(onWin, 600);
+      } else {
+        SoundSynth.playLoseSound();
+        composer.classList.add('wrong');
+        setTimeout(onLose, 600);
+      }
+    };
+    composer.querySelector('[data-testid="post-post-btn"]')
+      .addEventListener('click', () => resolve(item.safe));
+    composer.querySelector('[data-testid="post-think-btn"]')
+      .addEventListener('click', () => resolve(!item.safe));
+  },
+  cleanup() {}
+});
+
+/* ===== Mini-Game: URL Detective (DANGERS) =====
+   Shows 4 URLs, one real + 3 typosquatted fakes. Player must
+   click the REAL one. Wrong click = lose immediately.
+*/
+MiniGames.push({
+  name: 'url-detective',
+  topic:  { en: 'PHISHING AWARENESS', es: 'CONCIENCIA DE PHISHING' },
+  prompt: { en: 'FIND THE REAL SITE!', es: '¡ENCUENTRA EL SITIO REAL!' },
+  tipWin: {
+    en: 'Scammers copy famous websites by changing one tiny letter. Always read the URL letter by letter before clicking!',
+    es: 'Los estafadores copian sitios famosos cambiando una letra. ¡Siempre lee la URL letra por letra antes de hacer clic!'
+  },
+  tipLose: {
+    en: 'That URL was fake! Look out for swapped letters (l→1, o→0), extra letters, or weird endings like .co.fake — those are tricks.',
+    es: '¡Esa URL era falsa! Cuidado con letras cambiadas (l→1, o→0), letras extra o terminaciones raras como .co.fake — son trampas.'
+  },
+  desc: {
+    en: 'Four URLs are shown. Three are FAKE copies with small typos. Click the REAL one!',
+    es: 'Se muestran 4 URLs. Tres son copias FALSAS con errores pequeños. ¡Haz clic en la REAL!'
+  },
+  instr: {
+    en: 'CLICK THE REAL SITE. WATCH FOR FAKE LETTERS!',
+    es: 'HAZ CLIC EN EL SITIO REAL. ¡CUIDADO CON LETRAS FALSAS!'
+  },
+  // Each set: real URL + 3 fakes (typosquatted)
+  pool: [
+    { name: 'YouTube',   real: 'youtube.com',  fakes: ['y0utube.com', 'youtub3.com', 'youtube.co.fake'] },
+    { name: 'Google',    real: 'google.com',   fakes: ['g00gle.com',  'googel.com',  'googlle.com']    },
+    { name: 'Amazon',    real: 'amazon.com',   fakes: ['amaz0n.com',  'arnazon.com', 'amazon.co.shop'] },
+    { name: 'Netflix',   real: 'netflix.com',  fakes: ['netfllix.com','netfl1x.com', 'netflix.movie']  },
+    { name: 'Wikipedia', real: 'wikipedia.org',fakes: ['wikipedla.org','wik1pedia.org','wikipedia.net']},
+    { name: 'Spotify',   real: 'spotify.com',  fakes: ['sp0tify.com', 'spotlfy.com', 'spotify.music']  },
+  ],
+  labels: {
+    findReal:    { en: 'FIND THE REAL:', es: 'ENCUENTRA EL REAL:' },
+    addressBar:  { en: 'address bar',    es: 'barra de direcciones' },
+  },
+  mount(area, onWin, onLose) {
+    const item = pick(this.pool);
+
+    const instr = document.createElement('div');
+    instr.className = 'url-instruction';
+    instr.textContent = t(this.instr);
+    area.appendChild(instr);
+
+    const target = document.createElement('div');
+    target.className = 'url-target-text';
+    target.dataset.testid = 'url-target';
+    target.textContent = `${t(this.labels.findReal)} ${item.name.toUpperCase()}`;
+    area.appendChild(target);
+
+    // Decorative browser bar to set the context
+    const bar = document.createElement('div');
+    bar.className = 'url-browser-bar';
+    bar.innerHTML = `<span class="lock-icon">🔒</span><span>https://___</span>`;
+    area.appendChild(bar);
+
+    // Shuffle real + fakes
+    const options = shuffle([
+      { url: item.real,    isReal: true  },
+      { url: item.fakes[0], isReal: false },
+      { url: item.fakes[1], isReal: false },
+      { url: item.fakes[2], isReal: false },
+    ]);
+
+    const grid = document.createElement('div');
+    grid.className = 'url-grid';
+    area.appendChild(grid);
+
+    let resolved = false;
+    options.forEach((opt, idx) => {
+      const card = document.createElement('div');
+      card.className = 'url-card';
+      card.dataset.testid = opt.isReal ? 'url-real' : `url-fake-${idx}`;
+      card.textContent = opt.url;
+      grid.appendChild(card);
+      card.addEventListener('click', () => {
+        if (resolved) return;
+        resolved = true;
+        if (opt.isReal) {
+          card.classList.add('correct');
+          SoundSynth.playSnap();
+          const r = localRect(card);
+          spawnBurst(r.cx, r.cy, '#39ff14');
+          setTimeout(onWin, 600);
+        } else {
+          card.classList.add('wrong');
+          SoundSynth.playLoseSound();
+          setTimeout(onLose, 600);
+        }
+      });
+    });
+  },
+  cleanup() {}
+});
+
+/* ===== Mini-Game: Download Warning (DANGERS) =====
+   Shows a suspicious download dialog with shady filename. Player
+   must always pick CANCEL. CONTINUE = lose.
+*/
+MiniGames.push({
+  name: 'download-warning',
+  topic:  { en: 'SAFE DOWNLOADS', es: 'DESCARGAS SEGURAS' },
+  prompt: { en: 'OPEN OR CANCEL?', es: '¿ABRIR O CANCELAR?' },
+  tipWin: {
+    en: 'Watch out for files with weird endings like .exe, .scr or "double" endings like cat.jpg.exe. Those usually carry viruses!',
+    es: 'Cuidado con archivos con terminaciones raras como .exe, .scr o "doble" extensión como gato.jpg.exe. ¡Suelen llevar virus!'
+  },
+  tipLose: {
+    en: 'You let a virus in! Free software with weird names or .exe endings can hide malware. When in doubt, CANCEL.',
+    es: '¡Dejaste pasar un virus! Software gratis con nombres raros o terminación .exe puede esconder malware. Si dudas, CANCELA.'
+  },
+  desc: {
+    en: 'A file is trying to download. If the name looks suspicious (double extension, "FREE", weird letters), tap CANCEL!',
+    es: 'Un archivo intenta descargarse. Si el nombre es sospechoso (doble extensión, "GRATIS", letras raras), ¡toca CANCELAR!'
+  },
+  instr: {
+    en: 'READ THE FILENAME. IF SUSPICIOUS → CANCEL!',
+    es: 'LEE EL NOMBRE DEL ARCHIVO. SI ES SOSPECHOSO → ¡CANCELA!'
+  },
+  // All items are TRAPS — always pick CANCEL to win.
+  pool: [
+    { name: 'free_robux_GENERATOR.exe',  icon: '💎', size: { en: '0.4 MB', es: '0.4 MB' } },
+    { name: 'family_photo.jpg.exe',      icon: '🖼️', size: { en: '12 MB', es: '12 MB' } },
+    { name: 'homework_HELP_FREE.scr',    icon: '📄', size: { en: '2 MB',  es: '2 MB'  } },
+    { name: 'mineсraft_setup.exe',       icon: '🎮', size: { en: '8 MB',  es: '8 MB'  } },
+    { name: 'song_HIT_2026.mp3.exe',     icon: '🎵', size: { en: '5 MB',  es: '5 MB'  } },
+    { name: 'cute_cat_video.mp4.exe',    icon: '🎬', size: { en: '20 MB', es: '20 MB' } },
+    { name: 'GIFT_WINNER_PRIZE.zip.exe', icon: '🎁', size: { en: '1 MB',  es: '1 MB'  } },
+  ],
+  labels: {
+    download:    { en: 'DOWNLOAD READY', es: 'DESCARGA LISTA' },
+    fileSize:    { en: 'Size:', es: 'Tamaño:' },
+    askContinue: { en: 'Continue with this download?', es: '¿Continuar con esta descarga?' },
+    continueBtn: { en: 'CONTINUE', es: 'CONTINUAR' },
+    cancelBtn:   { en: 'CANCEL',   es: 'CANCELAR'  },
+  },
+  mount(area, onWin, onLose) {
+    area.classList.add('perm-mode');
+    const item = pick(this.pool);
+    const L = this.labels;
+
+    const instr = document.createElement('div');
+    instr.className = 'perm-instruction';
+    instr.textContent = t(this.instr);
+    area.appendChild(instr);
+
+    const win = document.createElement('div');
+    win.className = 'perm-window';
+    win.dataset.testid = 'dl-window';
+    win.innerHTML = `
+      <div class="perm-titlebar" style="background: var(--neon-orange); color: var(--ink);">
+        <div class="perm-titlebar-left">
+          <span class="perm-warn-icon">⬇</span>
+          <span>${t(L.download)}</span>
+        </div>
+        <div class="perm-titlebar-buttons">
+          <div class="perm-tb-btn">_</div>
+          <div class="perm-tb-btn">X</div>
+        </div>
+      </div>
+      <div class="perm-body">
+        <div class="dl-file-icon">${item.icon}</div>
+        <div class="dl-filename" data-testid="dl-filename">${item.name}</div>
+        <div class="dl-size">${t(L.fileSize)} ${t(item.size)}</div>
+        <div class="perm-question" style="margin-bottom:14px;">${t(L.askContinue)}</div>
+        <div class="perm-buttons">
+          <button class="perm-btn dl-btn cancel"   data-testid="dl-cancel-btn">${t(L.cancelBtn)}</button>
+          <button class="perm-btn dl-btn continue" data-testid="dl-continue-btn">${t(L.continueBtn)}</button>
+        </div>
+      </div>`;
+    area.appendChild(win);
+
+    let resolved = false;
+    win.querySelector('[data-testid="dl-cancel-btn"]').addEventListener('click', () => {
+      if (resolved) return; resolved = true;
+      SoundSynth.playSnap();
+      win.classList.add('correct');
+      const r = localRect(win); spawnBurst(r.cx, r.cy, '#39ff14');
+      setTimeout(onWin, 600);
+    });
+    win.querySelector('[data-testid="dl-continue-btn"]').addEventListener('click', () => {
+      if (resolved) return; resolved = true;
+      SoundSynth.playLoseSound();
+      win.classList.add('wrong');
+      setTimeout(onLose, 600);
+    });
+
+    this._area = area;
+  },
+  cleanup() {
+    if (this._area) this._area.classList.remove('perm-mode');
+  }
+});
+
+/* ===== Mini-Game: Screen Lock (PRIVACY) =====
+   Drag the padlock onto the unlocked phone before the "spy"
+   walks across the screen and reads your messages.
+*/
+MiniGames.push({
+  name: 'screen-lock',
+  topic:  { en: 'DEVICE SECURITY', es: 'SEGURIDAD DEL DISPOSITIVO' },
+  prompt: { en: 'LOCK THE PHONE!',  es: '¡BLOQUEA EL CELULAR!' },
+  tipWin: {
+    en: 'Always lock your phone with a PIN or fingerprint. If you leave it unlocked, anyone can read your private chats and photos.',
+    es: 'Siempre bloquea tu celular con PIN o huella. Si lo dejas desbloqueado, cualquiera puede leer tus chats y fotos privados.'
+  },
+  tipLose: {
+    en: 'Oh no! A snoop saw your messages. Always lock your phone before leaving it on the table — even for a minute!',
+    es: '¡Oh no! Un curioso vio tus mensajes. Siempre bloquea tu celular antes de dejarlo en la mesa — ¡aunque sea un minuto!'
+  },
+  desc: {
+    en: 'Drag the padlock onto the phone before someone sees your private apps!',
+    es: '¡Arrastra el candado al celular antes de que alguien vea tus apps privadas!'
+  },
+  instr: {
+    en: 'DRAG THE PADLOCK ONTO THE PHONE BEFORE THE SNOOP GETS HERE!',
+    es: 'ARRASTRA EL CANDADO AL CELULAR ANTES DE QUE EL CURIOSO LLEGUE'
+  },
+  labels: {
+    dragHere: { en: 'DRAG ME →', es: 'ARRÁSTRAME →' },
+    locked:   { en: 'LOCKED!',   es: '¡BLOQUEADO!'  },
+  },
+  mount(area, onWin, onLose) {
+    const L = this.labels;
+
+    const instr = document.createElement('div');
+    instr.className = 'lock-instruction';
+    instr.textContent = t(this.instr);
+    area.appendChild(instr);
+
+    const phone = document.createElement('div');
+    phone.className = 'lock-phone';
+    phone.dataset.testid = 'lock-phone';
+    const apps = ['💬', '📷', '📧', '📝', '🎵', '🎮', '📱', '💳', '🗺️'];
+    phone.innerHTML = `
+      <div class="lock-phone-screen">
+        ${apps.map(a => `<div class="lock-app-tile">${a}</div>`).join('')}
+      </div>`;
+    area.appendChild(phone);
+
+    // Snooping spy that approaches; if it reaches the phone before lock = lose
+    const spy = document.createElement('div');
+    spy.className = 'lock-spy';
+    spy.textContent = '👀';
+    spy.dataset.testid = 'lock-spy';
+    area.appendChild(spy);
+
+    const hint = document.createElement('div');
+    hint.className = 'lock-target-hint';
+    hint.textContent = t(L.dragHere);
+    area.appendChild(hint);
+
+    const pad = document.createElement('div');
+    pad.className = 'lock-pad draggable';
+    pad.dataset.testid = 'lock-pad';
+    pad.textContent = '🔒';
+    area.appendChild(pad);
+
+    let resolved = false;
+    let locked = false;
+
+    // Lose condition: spy reaches phone before locked
+    this._spyTimer = setTimeout(() => {
+      if (locked || resolved) return;
+      resolved = true;
+      SoundSynth.playLoseSound();
+      setTimeout(onLose, 400);
+    }, 11500); // matches CSS spyApproach (12s) minus a bit
+
+    makeDraggable(pad, {
+      disabled: () => resolved,
+      onRelease: (el) => {
+        if (resolved) return;
+        const pR = localRect(phone);
+        const eR = localRect(el);
+        if (overlaps(eR, pR)) {
+          locked = true; resolved = true;
+          phone.classList.add('locked');
+          phone.querySelector('.lock-phone-screen').textContent = '🔒';
+          el.style.transition = 'opacity 0.3s, transform 0.3s';
+          el.style.opacity = '0';
+          el.style.transform = 'scale(0.5)';
+          spy.style.animationPlayState = 'paused';
+          SoundSynth.playSnap();
+          spawnBurst(pR.cx, pR.cy, '#39ff14');
+          setTimeout(onWin, 600);
+        }
+      }
+    });
+
+    this._area = area;
+  },
+  cleanup() {
+    if (this._spyTimer) clearTimeout(this._spyTimer);
+  }
+});
+
+/* ===== Mini-Game: 2FA Quiz (PRIVACY) =====
+   A code is sent to your "phone". Type it into the login form
+   using the keypad before time runs out. Wrong digit = lose.
+*/
+MiniGames.push({
+  name: 'tfa-quiz',
+  topic:  { en: '2-STEP VERIFICATION', es: 'VERIFICACIÓN EN 2 PASOS' },
+  prompt: { en: 'TYPE THE CODE!', es: '¡TECLEA EL CÓDIGO!' },
+  tipWin: {
+    en: '2-step verification adds a second key to your account. Even if a hacker guesses your password, they cannot get in without the code.',
+    es: 'La verificación en 2 pasos añade una segunda llave a tu cuenta. Aunque un hacker adivine tu contraseña, no entra sin el código.'
+  },
+  tipLose: {
+    en: 'The code matters! Always type it exactly as you receive it, and NEVER share your 2FA code with anyone — not even friends.',
+    es: '¡El código importa! Tecléalo exactamente como llega y NUNCA lo compartas con nadie — ni siquiera con amigos.'
+  },
+  desc: {
+    en: 'A 4-digit code is sent to your phone. Type it in the login screen using the keypad!',
+    es: 'Te llega un código de 4 dígitos al celular. ¡Tecléalo en la pantalla de login con el teclado!'
+  },
+  instr: {
+    en: 'TYPE THE 4-DIGIT CODE EXACTLY AS SHOWN!',
+    es: '¡TECLEA EL CÓDIGO DE 4 DÍGITOS EXACTAMENTE COMO APARECE!'
+  },
+  labels: {
+    notifTitle:  { en: '📩 NEW MESSAGE',         es: '📩 MENSAJE NUEVO'         },
+    notifText:   { en: 'Your verification code:', es: 'Tu código de verificación:' },
+    loginTitle:  { en: '🔐 ENTER 2FA CODE',      es: '🔐 INGRESA CÓDIGO 2FA'    },
+  },
+  mount(area, onWin, onLose) {
+    const L = this.labels;
+
+    const instr = document.createElement('div');
+    instr.className = 'tfa-instruction';
+    instr.textContent = t(this.instr);
+    area.appendChild(instr);
+
+    // Generate a random 4-digit code
+    const code = String(randInt(1000, 9999));
+
+    // Notification card (left)
+    const notif = document.createElement('div');
+    notif.className = 'tfa-notification';
+    notif.innerHTML = `
+      <div class="tfa-notif-header">${t(L.notifTitle)}</div>
+      <div class="tfa-notif-text">${t(L.notifText)}</div>
+      <div class="tfa-code" data-testid="tfa-code">${code}</div>`;
+    area.appendChild(notif);
+
+    // Login form (right)
+    const login = document.createElement('div');
+    login.className = 'tfa-login';
+    login.innerHTML = `
+      <div class="tfa-login-title">${t(L.loginTitle)}</div>
+      <div class="tfa-slots" data-testid="tfa-slots">
+        ${[0,1,2,3].map(i => `<div class="tfa-slot" data-idx="${i}"></div>`).join('')}
+      </div>`;
+    area.appendChild(login);
+    const slots = login.querySelectorAll('.tfa-slot');
+    slots[0].classList.add('active');
+
+    // Keypad (bottom-center)
+    const keypad = document.createElement('div');
+    keypad.className = 'tfa-keypad';
+    const keys = [1,2,3,4,5,6,7,8,9,'',0,''];
+    keypad.innerHTML = keys.map(k => k === ''
+      ? `<div></div>`
+      : `<button class="tfa-key" data-key="${k}" data-testid="tfa-key-${k}">${k}</button>`
+    ).join('');
+    area.appendChild(keypad);
+
+    let pos = 0;
+    let resolved = false;
+    keypad.querySelectorAll('.tfa-key').forEach(btn => {
+      btn.addEventListener('click', () => {
+        if (resolved) return;
+        const digit = btn.dataset.key;
+        const expected = code[pos];
+        if (digit === expected) {
+          slots[pos].textContent = digit;
+          slots[pos].classList.add('filled');
+          slots[pos].classList.remove('active');
+          SoundSynth.playClickSound();
+          pos++;
+          if (pos >= 4) {
+            resolved = true;
+            SoundSynth.playSnap();
+            const r = localRect(login);
+            spawnBurst(r.cx, r.cy, '#39ff14');
+            setTimeout(onWin, 500);
+          } else {
+            slots[pos].classList.add('active');
+          }
+        } else {
+          resolved = true;
+          btn.classList.add('wrong');
+          SoundSynth.playLoseSound();
+          setTimeout(onLose, 500);
+        }
+      });
+    });
+  },
+  cleanup() {}
+});
+
+/* ===== Mini-Game: Cookies Banner (PRIVACY) =====
+   A cookie banner appears. Player must pick "ONLY NECESSARY"
+   to protect their browsing privacy. "ACCEPT ALL" = lose.
+*/
+MiniGames.push({
+  name: 'cookies-banner',
+  topic:  { en: 'BROWSING PRIVACY', es: 'PRIVACIDAD AL NAVEGAR' },
+  prompt: { en: 'COOKIES, OK?',     es: 'COOKIES, ¿OK?' },
+  tipWin: {
+    en: 'Most websites track you with cookies. Always tap "Only Necessary" so they don\'t collect data about you and your friends.',
+    es: 'La mayoría de sitios te rastrean con cookies. Siempre toca "Solo necesarias" para que no recolecten datos tuyos ni de tus amigos.'
+  },
+  tipLose: {
+    en: 'Oops! Accepting all cookies lets sites track everywhere you go online. Pick "Only Necessary" next time.',
+    es: '¡Ups! Aceptar todas las cookies deja que los sitios te sigan por toda internet. Elige "Solo necesarias" la próxima vez.'
+  },
+  desc: {
+    en: 'A website is asking about cookies. Pick "Only Necessary" to protect your privacy!',
+    es: 'Un sitio te pregunta sobre cookies. ¡Elige "Solo necesarias" para proteger tu privacidad!'
+  },
+  instr: {
+    en: 'TO STAY PRIVATE → ALWAYS PICK "ONLY NECESSARY"',
+    es: 'PARA MANTENERTE PRIVADO → ELIGE SIEMPRE "SOLO NECESARIAS"'
+  },
+  // The fake website name shown for flavor
+  sites: {
+    en: ['fungames.com', 'cool-videos.net', 'awesome-shop.com', 'free-stickers.io', 'school-help.org'],
+    es: ['juegosdivertidos.com', 'videos-geniales.net', 'tienda-cool.com', 'stickers-gratis.io', 'ayuda-escolar.org']
+  },
+  labels: {
+    text: {
+      en: 'This site uses cookies to track your activity across the internet. Do you accept?',
+      es: 'Este sitio usa cookies para rastrear tu actividad por toda internet. ¿Aceptas?'
+    },
+    acceptBtn:    { en: 'ACCEPT ALL',     es: 'ACEPTAR TODO'    },
+    necessaryBtn: { en: 'ONLY NECESSARY', es: 'SOLO NECESARIAS' },
+  },
+  mount(area, onWin, onLose) {
+    const L = this.labels;
+    const site = pick(t(this.sites));
+
+    const browser = document.createElement('div');
+    browser.className = 'cookie-browser';
+    browser.dataset.testid = 'cookie-browser';
+    browser.innerHTML = `
+      <div class="cookie-browser-bar">
+        <span class="dot r"></span><span class="dot y"></span><span class="dot g"></span>
+        <span class="url-text">🔒 ${site}</span>
+      </div>
+      <div class="cookie-page">${Game.lang === 'es'
+        ? '🎮 ¡Bienvenido al sitio!\nCarga la página...\n\n[contenido del sitio]'
+        : '🎮 Welcome to the site!\nLoading page...\n\n[site content]'}</div>
+      <div class="cookie-banner">
+        <div class="cookie-banner-row">
+          <div class="cookie-icon">🍪</div>
+          <div class="cookie-text">${t(L.text)}</div>
+          <div class="cookie-buttons">
+            <button class="cookie-btn necessary" data-testid="cookie-necessary-btn">${t(L.necessaryBtn)}</button>
+            <button class="cookie-btn accept"    data-testid="cookie-accept-btn">${t(L.acceptBtn)}</button>
+          </div>
+        </div>
+      </div>`;
+    area.appendChild(browser);
+
+    const instr = document.createElement('div');
+    instr.className = 'perm-instruction';
+    instr.style.top = '18px';
+    instr.textContent = t(this.instr);
+    area.appendChild(instr);
+
+    let resolved = false;
+    browser.querySelector('[data-testid="cookie-necessary-btn"]').addEventListener('click', () => {
+      if (resolved) return; resolved = true;
+      SoundSynth.playSnap();
+      const r = localRect(browser);
+      spawnBurst(r.cx, r.cy, '#39ff14');
+      browser.style.transition = 'transform 0.4s, opacity 0.4s';
+      browser.style.transform = 'scale(1.04)';
+      setTimeout(onWin, 500);
+    });
+    browser.querySelector('[data-testid="cookie-accept-btn"]').addEventListener('click', () => {
+      if (resolved) return; resolved = true;
+      SoundSynth.playLoseSound();
+      browser.style.animation = 'permWrongShake 0.5s';
+      setTimeout(onLose, 500);
+    });
+  },
+  cleanup() {}
 });
 
 /* ===== Mini-Game 2: Meme Shield ===== */
@@ -2550,13 +3825,25 @@ function startNewGame(category) {
 
   let categoryGames = [];
   if (cat === 'citizenship') {
-    categoryGames = [MiniGames.find(mg => mg.name === 'fake-news'), MiniGames.find(mg => mg.name === 'meme-shield')];
+    categoryGames = [
+      MiniGames.find(mg => mg.name === 'fake-news'),
+      MiniGames.find(mg => mg.name === 'meme-shield'),
+      MiniGames.find(mg => mg.name === 'think-before-post'),
+    ];
   } else if (cat === 'dangers') {
-    categoryGames = [MiniGames.find(mg => mg.name === 'phishing-hook'), MiniGames.find(mg => mg.name === 'inbox-cleaner')];
+    categoryGames = [
+      MiniGames.find(mg => mg.name === 'phishing-hook'),
+      MiniGames.find(mg => mg.name === 'inbox-cleaner'),
+      MiniGames.find(mg => mg.name === 'url-detective'),
+      MiniGames.find(mg => mg.name === 'download-warning'),
+    ];
   } else if (cat === 'privacy') {
     categoryGames = [
       MiniGames.find(mg => mg.name === 'password-puzzle'),
       MiniGames.find(mg => mg.name === 'app-permissions'),
+      MiniGames.find(mg => mg.name === 'screen-lock'),
+      MiniGames.find(mg => mg.name === 'tfa-quiz'),
+      MiniGames.find(mg => mg.name === 'cookies-banner'),
     ];
   }
 
