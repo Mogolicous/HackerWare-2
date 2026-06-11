@@ -76,7 +76,7 @@ Create a fast-paced, educational WarioWare-style web micro-game titled "HackerWa
 - Mid-game language toggle (currently locked after PLAY click; `applyLanguage` would need to re-render HUD round label)
 
 ## How to Run
-- Live preview: https://pixel-security-kids.preview.emergentagent.com/ (auto-redirects to `/hackerware.html`)
+- Live preview: https://syntax-checker-59.preview.emergentagent.com/ (auto-redirects to `/hackerware.html`)
 - Standalone: open `/app/hackerware.html` in any modern browser — fully self-contained, just needs internet for Google Fonts (game works without too — falls back to monospace)
 
 ## Test Reports
