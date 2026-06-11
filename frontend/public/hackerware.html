@@ -201,10 +201,17 @@ body {
   line-height: 1.4;
 }
 /* Language selector */
+#lang-wrapper {
+  position: absolute;
+  bottom: 20px;
+  left: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
 #lang-selector {
   display: flex;
   gap: 16px;
-  margin-bottom: 28px;
 }
 .lang-btn {
   font-family: 'Press Start 2P', monospace;
@@ -223,12 +230,7 @@ body {
   color: var(--text-dark);
   box-shadow: 0 0 16px rgba(0,240,255,0.6);
 }
-.lang-label {
-  font-size: 10px;
-  color: var(--title-1);
-  letter-spacing: 2px;
-  margin-bottom: 10px;
-}
+
 
 /* ===== Pixel Button ===== */
 .pixel-btn {
@@ -511,9 +513,9 @@ body {
 
 /* ===== Feedback Screen ===== */
 #screen-feedback .result {
-  font-size: 48px;
+  font-size: 40px;
   letter-spacing: 4px;
-  margin-bottom: 24px;
+  margin-bottom: 12px;
   text-shadow: 4px 4px 0 var(--title-3);
 }
 #screen-feedback .result.win  { color: #18a040; }
@@ -521,7 +523,7 @@ body {
 #screen-feedback .tip-card {
   background: var(--surface);
   border: 4px solid var(--neon-cyan);
-  padding: 24px 32px;
+  padding: 16px 24px;
   max-width: 720px;
   position: relative;
   box-shadow: 6px 6px 0 var(--neon-pink);
@@ -570,6 +572,85 @@ body {
   font-size: 26px;
   color: var(--ink);
   margin-bottom: 36px;
+}
+
+/* ===== Review Screen ===== */
+#screen-review {
+  background: #ffffff;
+}
+#screen-review h2 {
+  font-size: 40px;
+  color: var(--title-1);
+  text-shadow: 4px 4px 0 var(--title-2);
+  margin-bottom: 20px;
+}
+#screen-review .review-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 24px;
+  width: 100%;
+  max-width: 600px;
+}
+#screen-review .review-item {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 14px;
+  background: var(--surface-alt);
+  border: 4px solid;
+  padding: 12px;
+  cursor: pointer;
+  box-shadow: 4px 4px 0 var(--title-3);
+  transition: transform 0.1s;
+}
+#screen-review .review-item:active {
+  transform: translate(2px, 2px);
+  box-shadow: 2px 2px 0 var(--title-3);
+}
+#screen-review .review-item.won {
+  color: #22C55E;
+  border-color: #22C55E;
+}
+#screen-review .review-item.lost {
+  color: #EF4444;
+  border-color: #EF4444;
+}
+#screen-review .tip-box {
+  display: none;
+  position: absolute;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  background: var(--surface);
+  border: 4px solid var(--neon-cyan);
+  padding: 36px 24px 24px;
+  min-height: 120px;
+  width: 90%;
+  max-width: 800px;
+  font-family: 'VT323', monospace;
+  font-size: 24px;
+  color: var(--ink);
+  line-height: 1.4;
+  box-shadow: 0 0 0 100vw rgba(255,255,255,0.8), 8px 8px 0 var(--neon-pink);
+  z-index: 1000;
+}
+#screen-review .tip-box.active {
+  display: block;
+}
+.tip-close-btn {
+  position: absolute;
+  top: -4px; right: -4px;
+  background: var(--neon-red);
+  color: var(--text-light);
+  border: 4px solid var(--title-3);
+  width: 36px; height: 36px;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 16px;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer;
+  box-shadow: 4px 4px 0 var(--title-3);
+}
+.tip-close-btn:active {
+  transform: translate(2px, 2px);
+  box-shadow: 2px 2px 0 var(--title-3);
 }
 
 /* ===== Mini-Game Stage ===== */
@@ -851,6 +932,232 @@ body {
   to { transform: translateX(-50%) translateY(400px) rotate(60deg); opacity: 0.4; }
 }
 
+/* ===== App Permissions (¡Cuidado con los Permisos!) ===== */
+#game-area.perm-mode { background: rgba(13, 2, 33, 0.04); }
+.perm-instruction {
+  position: absolute;
+  top: 24px; left: 50%; transform: translateX(-50%);
+  font-size: 11px;
+  color: var(--title-1);
+  text-align: center;
+  letter-spacing: 1.5px;
+  max-width: 880px;
+  line-height: 1.4;
+}
+.perm-window {
+  position: absolute;
+  top: 80px; left: 50%; transform: translate(-50%, 20px) scale(0.5);
+  width: 520px;
+  background: var(--surface);
+  border: 5px solid var(--ink);
+  box-shadow:
+    8px 8px 0 var(--neon-pink),
+    8px 8px 0 5px var(--ink);
+  opacity: 0;
+  animation: permPopIn 0.45s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+@keyframes permPopIn {
+  0%   { opacity: 0; transform: translate(-50%, 20px) scale(0.5) rotate(-3deg); }
+  60%  { opacity: 1; transform: translate(-50%, -10px) scale(1.05) rotate(1deg); }
+  100% { opacity: 1; transform: translate(-50%, 0) scale(1) rotate(0deg); }
+}
+.perm-titlebar {
+  background: var(--title-1);
+  color: var(--text-light);
+  padding: 8px 12px;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 11px;
+  letter-spacing: 1.5px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 4px solid var(--ink);
+}
+.perm-titlebar-left { display: flex; align-items: center; gap: 10px; }
+.perm-titlebar .perm-warn-icon {
+  display: inline-block;
+  width: 18px; height: 18px;
+  background: var(--neon-yellow);
+  color: var(--ink);
+  border: 2px solid var(--ink);
+  font-family: 'Press Start 2P', monospace;
+  font-size: 11px;
+  text-align: center;
+  line-height: 14px;
+  animation: permWarnBlink 0.6s steps(2) infinite;
+}
+@keyframes permWarnBlink { 50% { background: var(--neon-orange); } }
+.perm-titlebar-buttons { display: flex; gap: 4px; }
+.perm-tb-btn {
+  width: 18px; height: 18px;
+  background: var(--surface-alt);
+  border: 2px solid var(--ink);
+  color: var(--ink);
+  font-family: 'Press Start 2P', monospace;
+  font-size: 9px;
+  text-align: center;
+  line-height: 14px;
+}
+.perm-body {
+  padding: 24px 28px 28px;
+  text-align: center;
+}
+.perm-app-icon {
+  display: inline-block;
+  width: 80px; height: 80px;
+  background: var(--surface-alt);
+  border: 4px solid var(--neon-cyan);
+  font-size: 48px;
+  line-height: 76px;
+  text-align: center;
+  margin-bottom: 14px;
+  box-shadow: 4px 4px 0 var(--ink);
+}
+.perm-question {
+  font-family: 'VT323', monospace;
+  font-size: 22px;
+  color: var(--ink);
+  line-height: 1.3;
+  margin-bottom: 16px;
+}
+.perm-question .perm-app-name {
+  display: inline-block;
+  padding: 2px 8px;
+  background: var(--neon-yellow);
+  color: var(--ink);
+  border: 2px solid var(--ink);
+  font-family: 'Press Start 2P', monospace;
+  font-size: 11px;
+  letter-spacing: 1px;
+  margin: 0 2px;
+}
+.perm-permission-row {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  background: var(--surface-alt);
+  border: 3px solid var(--neon-red);
+  padding: 10px 16px;
+  margin: 4px 0 18px;
+  box-shadow: 3px 3px 0 var(--ink);
+  animation: permRedFlash 1s ease-in-out infinite alternate;
+}
+@keyframes permRedFlash {
+  from { box-shadow: 3px 3px 0 var(--ink), 0 0 0 rgba(255,18,79,0); }
+  to   { box-shadow: 3px 3px 0 var(--ink), 0 0 18px rgba(255,18,79,0.55); }
+}
+.perm-permission-icon { font-size: 28px; line-height: 1; }
+.perm-permission-text {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 13px;
+  color: var(--neon-red);
+  letter-spacing: 2px;
+}
+.perm-buttons {
+  display: flex;
+  gap: 18px;
+  justify-content: center;
+  margin-top: 8px;
+}
+.perm-btn {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 14px;
+  letter-spacing: 2px;
+  padding: 14px 22px;
+  border: 4px solid var(--ink);
+  cursor: pointer;
+  color: var(--ink);
+  box-shadow: 5px 5px 0 var(--ink);
+  transition: transform 0.08s, box-shadow 0.08s;
+  min-width: 150px;
+}
+.perm-btn:hover { transform: translate(-1px, -1px); box-shadow: 6px 6px 0 var(--ink); }
+.perm-btn:active { transform: translate(3px, 3px); box-shadow: 2px 2px 0 var(--ink); }
+.perm-btn.allow { background: var(--neon-red);   color: var(--text-light); }
+.perm-btn.deny  { background: var(--neon-green); color: var(--ink); }
+.perm-window.correct { animation: permCorrectFlash 0.5s ease-out forwards; }
+@keyframes permCorrectFlash {
+  0%   { box-shadow: 8px 8px 0 var(--neon-pink), 8px 8px 0 5px var(--ink), 0 0 0 0 rgba(57,255,20,0); }
+  50%  { transform: translate(-50%, -4px) scale(1.03); box-shadow: 8px 8px 0 var(--neon-green), 8px 8px 0 5px var(--ink), 0 0 40px 8px rgba(57,255,20,0.6); }
+  100% { transform: translate(-50%, 30px) scale(0.7); opacity: 0; }
+}
+.perm-window.wrong { animation: permWrongShake 0.5s ease-in-out forwards; }
+@keyframes permWrongShake {
+  0%, 100% { transform: translate(-50%, 0) scale(1); }
+  20%      { transform: translate(calc(-50% - 12px), 0) scale(1) rotate(-2deg); background: #ffe5ec; }
+  40%      { transform: translate(calc(-50% + 12px), 0) scale(1) rotate(2deg); background: #ffe5ec; }
+  60%      { transform: translate(calc(-50% - 10px), 0) scale(1.02) rotate(-1deg); }
+  80%      { transform: translate(calc(-50% + 10px), 0) scale(1.02) rotate(1deg); }
+}
+
+/* ---- Demo: App Permissions (looping tutorial) ---- */
+.demo-perm {
+  background: var(--surface-alt);
+}
+.demo-perm .d-window {
+  position: absolute;
+  top: 20px; left: 50%; transform: translateX(-50%);
+  width: 280px;
+  background: var(--surface);
+  border: 3px solid var(--ink);
+  box-shadow: 4px 4px 0 var(--neon-pink);
+}
+.demo-perm .d-titlebar {
+  background: var(--title-1);
+  color: var(--text-light);
+  font-family: 'Press Start 2P', monospace;
+  font-size: 8px;
+  padding: 4px 6px;
+  letter-spacing: 1px;
+  border-bottom: 2px solid var(--ink);
+}
+.demo-perm .d-body {
+  padding: 10px 8px;
+  font-family: 'VT323', monospace;
+  font-size: 14px;
+  color: var(--ink);
+  text-align: center;
+  line-height: 1.2;
+}
+.demo-perm .d-app { font-size: 28px; }
+.demo-perm .d-perm-tag {
+  display: inline-block;
+  background: #ffe5ec;
+  border: 2px solid var(--neon-red);
+  color: var(--neon-red);
+  padding: 2px 6px;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 8px;
+  letter-spacing: 1px;
+  margin: 4px 0;
+}
+.demo-perm .d-btn-row { display: flex; justify-content: center; gap: 8px; margin-top: 4px; }
+.demo-perm .d-btn {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 8px;
+  border: 2px solid var(--ink);
+  padding: 4px 6px;
+  letter-spacing: 1px;
+  box-shadow: 2px 2px 0 var(--ink);
+}
+.demo-perm .d-btn.allow { background: var(--neon-red);   color: var(--text-light); }
+.demo-perm .d-btn.deny  { background: var(--neon-green); color: var(--ink); animation: dDenyHL 1.4s ease-in-out infinite; }
+@keyframes dDenyHL {
+  0%, 100% { box-shadow: 2px 2px 0 var(--ink); }
+  50%      { box-shadow: 2px 2px 0 var(--ink), 0 0 10px var(--neon-green); transform: scale(1.05); }
+}
+.demo-perm .demo-cursor {
+  top: 110px; left: 90px;
+  animation: dCursorPerm 1.4s ease-in-out infinite;
+}
+@keyframes dCursorPerm {
+  0%   { transform: translate(0, 0) scale(1); }
+  45%  { transform: translate(80px, 0) scale(1); }
+  55%  { transform: translate(80px, 0) scale(0.8); } /* click */
+  70%  { transform: translate(80px, 0) scale(1); }
+  100% { transform: translate(0, 0) scale(1); }
+}
+
 /* ===== Particle FX ===== */
 .fx-particle {
   position: absolute;
@@ -873,7 +1180,10 @@ body {
 
   <!-- HUD -->
   <div id="hud" class="hidden">
-    <div id="lives" data-testid="lives-display"></div>
+    <div style="display: flex; align-items: center; gap: 16px;">
+      <button id="btn-home" class="pixel-btn red" style="padding: 4px 8px; font-size: 14px; min-height: 0; min-width: 0; pointer-events: auto;" data-i18n="homeBtn">HOME</button>
+      <div id="lives" data-testid="lives-display"></div>
+    </div>
     <div id="timer-wrap">
       <div id="timer-label" data-i18n="time">TIME</div>
       <div id="timer-bar-bg"><div id="timer-bar" data-testid="timer-bar"></div></div>
@@ -885,10 +1195,11 @@ body {
   <div id="screen-start" class="screen active" data-testid="screen-start">
     <h1 data-testid="game-title">HACKERWARE</h1>
     <div class="subtitle" data-i18n="subtitle">CYBER SAFETY MICRO-GAMES</div>
-    <div class="lang-label" data-i18n="chooseLang">CHOOSE LANGUAGE / ELIGE IDIOMA</div>
-    <div id="lang-selector">
-      <button class="lang-btn active" data-lang="en" data-testid="lang-en-button">ENGLISH</button>
-      <button class="lang-btn" data-lang="es" data-testid="lang-es-button">ESPAÑOL</button>
+    <div id="lang-wrapper">
+      <div id="lang-selector">
+        <button class="lang-btn" data-lang="en" data-testid="lang-en-button">ENGLISH</button>
+        <button class="lang-btn active" data-lang="es" data-testid="lang-es-button">ESPAÑOL</button>
+      </div>
     </div>
     <div class="lives-preview">
       <div class="heart"></div><div class="heart"></div><div class="heart"></div>
@@ -898,6 +1209,20 @@ body {
       Quick! Beat each 5-game challenge to learn how to stay safe online.<br>
       Use your mouse to click and drag. Good luck, cyber-hero!
     </div>
+  </div>
+
+  <!-- Categories Screen -->
+  <div id="screen-categories" class="screen" data-testid="screen-categories">
+    <h1 style="font-size: 36px; margin-bottom: 40px; text-shadow: 3px 3px 0 var(--title-2); color: var(--neon-cyan);" data-i18n="chooseCategory">CHOOSE CATEGORY</h1>
+    
+    <div style="display: flex; gap: 20px; flex-wrap: wrap; justify-content: center; max-width: 800px; margin-bottom: 40px;">
+      <button class="pixel-btn" id="btn-cat-citizenship" data-i18n="catCitizenship" style="min-width: 250px; background: #6366f1; border-color: #4338ca; box-shadow: 6px 6px 0 #3730a3; min-height: 80px; font-size: 20px;">DIGITAL CITIZENSHIP</button>
+      <button class="pixel-btn" id="btn-cat-dangers" data-i18n="catDangers" style="min-width: 250px; background: #ef4444; border-color: #dc2626; box-shadow: 6px 6px 0 #b91c1c; min-height: 80px; font-size: 20px;">NETWORK DANGERS</button>
+      <button class="pixel-btn" id="btn-cat-privacy" data-i18n="catPrivacy" style="min-width: 250px; background: #10b981; border-color: #059669; box-shadow: 6px 6px 0 #047857; min-height: 80px; font-size: 20px;">PRIVACY & SECURITY</button>
+    </div>
+    
+    <!-- Placeholder for user image -->
+    <img id="category-mascot" src="" style="width: 250px; height: auto; min-height: 200px; object-fit: contain; display: none;" alt="Category Mascot">
   </div>
 
   <!-- Intro Screen (mini-game prompt) -->
@@ -920,9 +1245,12 @@ body {
   <!-- Feedback Screen -->
   <div id="screen-feedback" class="screen" data-testid="screen-feedback">
     <div class="result win" id="feedback-result" data-testid="feedback-result">YOU WIN!</div>
-    <div class="tip-card">
-      <h3 data-i18n="cyberTip">CYBER TIP</h3>
-      <p id="feedback-tip" data-testid="feedback-tip">A strong password is like a secret shield!</p>
+    <div class="tip-card" style="display: flex; align-items: center; gap: 24px;">
+      <img id="feedback-image" src="" style="width: 250px; height: auto; flex-shrink: 0; display: none;" />
+      <div>
+        <h3 data-i18n="cyberTip">CYBER TIP</h3>
+        <p id="feedback-tip" data-testid="feedback-tip">A strong password is like a secret shield!</p>
+      </div>
     </div>
     <button class="pixel-btn green" id="btn-next" data-testid="next-button" data-i18n="next" style="margin-top:22px;">NEXT</button>
   </div>
@@ -933,6 +1261,21 @@ body {
     <div class="gameover-sub" data-i18n="gameOverSub">YOUR CYBER MISSION IS DONE</div>
     <div class="rounds-summary" id="gameover-summary" data-testid="gameover-summary">You survived 0 rounds!</div>
     <button class="pixel-btn green" id="btn-restart" data-testid="restart-button" data-i18n="playAgain">PLAY AGAIN</button>
+  </div>
+
+  <!-- Review Results Screen -->
+  <div id="screen-review" class="screen" data-testid="screen-review">
+    <h2 data-i18n="reviewResults">REVIEW RESULTS</h2>
+    <div class="review-list" id="review-list"></div>
+    <button class="pixel-btn green" id="btn-review-restart" data-testid="review-restart-button" data-i18n="playAgain">PLAY AGAIN</button>
+    
+    <div class="tip-box" id="review-tip-box">
+      <button class="tip-close-btn" id="btn-close-tip">X</button>
+      <div style="display: flex; align-items: center; gap: 20px;">
+        <img id="review-tip-sprite" src="" style="width: 400px; height: auto; flex-shrink: 0; margin-left: -40px;" />
+        <div id="review-tip-text"></div>
+      </div>
+    </div>
   </div>
 
 </div>
@@ -1087,7 +1430,7 @@ const SoundSynth = (() => {
    2. GLOBAL GAME STATE
    --------------------------------------------------------- */
 const Game = {
-  lang: 'en', // 'en' | 'es' - selected on start screen
+  lang: 'es', // 'en' | 'es' - selected on start screen
   lives: 3,
   roundsWon: 0,
   currentTimerSec: 15,
@@ -1096,6 +1439,9 @@ const Game = {
   miniGameQueue: [],
   activeMiniGame: null,
   acceptInput: false,
+  introTimeout: null,
+  currentCategory: null,
+  history: [],
 };
 
 /* ---------------------------------------------------------
@@ -1119,6 +1465,10 @@ const I18N = {
     gameOverSub: 'YOUR CYBER MISSION IS DONE',
     survived:    (n) => `You survived ${n} round${n === 1 ? '' : 's'}!`,
     playAgain:   'PLAY AGAIN',
+    reviewResults: 'REVIEW RESULTS',
+    clickGameTip: 'CLICK A GAME TO VIEW TIP',
+    homeBtn:      'HOME',
+    chooseCategory: 'CHOOSE CATEGORY',
   },
   es: {
     subtitle:    'MICRO-JUEGOS DE CIBER-SEGURIDAD',
@@ -1135,6 +1485,13 @@ const I18N = {
     gameOverSub: 'TU MISIÓN CIBER HA TERMINADO',
     survived:    (n) => `¡Sobreviviste ${n} ronda${n === 1 ? '' : 's'}!`,
     playAgain:   'JUGAR DE NUEVO',
+    reviewResults: 'RESULTADOS',
+    clickGameTip: 'HAZ CLIC PARA VER EL CONSEJO',
+    homeBtn:      'INICIO',
+    chooseCategory: 'ELIGE UNA CATEGORÍA',
+    catCitizenship: 'CIUDADANÍA DIGITAL',
+    catDangers: 'PELIGROS EN LA RED',
+    catPrivacy: 'PROTECCIÓN Y PRIVACIDAD',
   }
 };
 
@@ -1398,6 +1755,23 @@ function buildDemoHTML(name, lang) {
           <div class="d-bait">${lang === 'es' ? 'PREMIO' : 'PRIZE'}</div>
           <div class="demo-scissors-cursor">${SCISSORS_SVG}</div>
         </div>`;
+    case 'app-permissions':
+      return `
+        <div class="demo demo-perm">
+          <div class="d-window">
+            <div class="d-titlebar">${lang === 'es' ? '⚠ PERMISO' : '⚠ PERMISSION'}</div>
+            <div class="d-body">
+              <div class="d-app">🔦</div>
+              <div>${lang === 'es' ? 'Linterna quiere:' : 'Flashlight wants:'}</div>
+              <div class="d-perm-tag">${lang === 'es' ? 'CONTACTOS' : 'CONTACTS'}</div>
+              <div class="d-btn-row">
+                <div class="d-btn allow">${lang === 'es' ? 'PERMITIR' : 'ALLOW'}</div>
+                <div class="d-btn deny">${lang === 'es' ? 'DENEGAR' : 'DENY'}</div>
+              </div>
+            </div>
+          </div>
+          <div class="demo-cursor">${CURSOR_SVG}</div>
+        </div>`;
     default:
       return '';
   }
@@ -1504,6 +1878,133 @@ MiniGames.push({
     });
   },
   cleanup() {}
+});
+
+/* ===== Mini-Game: App Permissions (¡Cuidado con los Permisos!) =====
+   Shows a retro system-alert popup where a harmless app is asking
+   for a permission it has no business needing. Player must click
+   DENY to win. Clicking ALLOW = lose.
+*/
+MiniGames.push({
+  name: 'app-permissions',
+  topic:  { en: 'PRIVACY & SECURITY', es: 'PROTECCIÓN Y PRIVACIDAD' },
+  prompt: { en: 'ALLOW OR DENY?',     es: '¿PERMITIR O DENEGAR?' },
+  tipWin: {
+    en: 'Some apps ask for permissions they do not need. A flashlight does NOT need your contacts! Always read carefully and DENY suspicious permissions.',
+    es: 'Algunas apps piden permisos que no necesitan. ¡Una linterna NO necesita tus contactos! Lee con cuidado y siempre DENIEGA los permisos sospechosos.'
+  },
+  tipLose: {
+    en: 'Careful! By allowing that permission, the app could spy on your data. A flashlight does not need your contacts — always think before you tap ALLOW.',
+    es: '¡Cuidado! Al permitir ese acceso, la app podría espiar tus datos. Una linterna no necesita tus contactos — siempre piensa antes de tocar PERMITIR.'
+  },
+  desc: {
+    en: 'A popup asks for a strange permission. Is it really safe? Tap DENY if the app does NOT need it!',
+    es: 'Una ventana pide un permiso extraño. ¿Es realmente seguro? ¡Toca DENEGAR si la app NO lo necesita!'
+  },
+  instr: {
+    en: 'READ THE POPUP. IF THE APP DOES NOT NEED THAT PERMISSION → DENY!',
+    es: 'LEE LA VENTANA. SI LA APP NO NECESITA ESE PERMISO → ¡DENIEGA!'
+  },
+  // Pool of suspicious app/permission mismatches. All items are TRAPS:
+  // the player must always pick DENY. Variety teaches the pattern.
+  pool: [
+    { app: { en: 'FLASHLIGHT',     es: 'LINTERNA'      }, appIcon: '🔦',
+      perm:{ en: 'YOUR CONTACTS',  es: 'TUS CONTACTOS' }, permIcon: '👥' },
+    { app: { en: 'CALCULATOR',     es: 'CALCULADORA'   }, appIcon: '🧮',
+      perm:{ en: 'YOUR LOCATION',  es: 'TU UBICACIÓN'  }, permIcon: '📍' },
+    { app: { en: 'WALLPAPERS',     es: 'FONDOS DE PANTALLA' }, appIcon: '🖼️',
+      perm:{ en: 'SMS & CALLS',    es: 'SMS Y LLAMADAS' }, permIcon: '📞' },
+    { app: { en: 'ALARM CLOCK',    es: 'DESPERTADOR'   }, appIcon: '⏰',
+      perm:{ en: 'BROWSING HISTORY', es: 'HISTORIAL WEB' }, permIcon: '🌐' },
+    { app: { en: 'STICKER PACK',   es: 'PAQUETE DE STICKERS' }, appIcon: '🎨',
+      perm:{ en: 'CAMERA & MIC',   es: 'CÁMARA Y MICRÓFONO' }, permIcon: '🎥' },
+    { app: { en: 'SIMPLE GAME',    es: 'JUEGO SENCILLO' }, appIcon: '🎮',
+      perm:{ en: 'YOUR CONTACTS',  es: 'TUS CONTACTOS' }, permIcon: '👥' },
+    { app: { en: 'NOTES APP',      es: 'NOTAS'         }, appIcon: '📝',
+      perm:{ en: 'GPS LOCATION',   es: 'UBICACIÓN GPS' }, permIcon: '📍' },
+    { app: { en: 'FREE MUSIC',     es: 'MÚSICA GRATIS' }, appIcon: '🎵',
+      perm:{ en: 'PHONE CALLS',    es: 'TUS LLAMADAS'  }, permIcon: '📞' },
+  ],
+  labels: {
+    permissionRequest: { en: 'PERMISSION REQUEST', es: 'SOLICITUD DE PERMISO' },
+    wants:             { en: 'wants to access',    es: 'quiere acceder a'    },
+    allowQuestion:     { en: 'Do you allow it?',   es: '¿Lo permites?'       },
+    allowBtn:          { en: 'ALLOW',              es: 'PERMITIR'            },
+    denyBtn:           { en: 'DENY',               es: 'DENEGAR'             },
+  },
+  mount(area, onWin, onLose) {
+    area.classList.add('perm-mode');
+
+    // Instruction line above the popup
+    const instr = document.createElement('div');
+    instr.className = 'perm-instruction';
+    instr.textContent = t(this.instr);
+    area.appendChild(instr);
+
+    // Pick a random trap from the pool
+    const item = pick(this.pool);
+    const L = this.labels;
+
+    // Build the popup window
+    const win = document.createElement('div');
+    win.className = 'perm-window';
+    win.dataset.testid = 'perm-window';
+    win.innerHTML = `
+      <div class="perm-titlebar">
+        <div class="perm-titlebar-left">
+          <span class="perm-warn-icon">!</span>
+          <span>${t(L.permissionRequest)}</span>
+        </div>
+        <div class="perm-titlebar-buttons">
+          <div class="perm-tb-btn">_</div>
+          <div class="perm-tb-btn">X</div>
+        </div>
+      </div>
+      <div class="perm-body">
+        <div class="perm-app-icon">${item.appIcon}</div>
+        <div class="perm-question">
+          <span class="perm-app-name" data-testid="perm-app-name">${t(item.app)}</span>
+          ${t(L.wants)}:
+        </div>
+        <div class="perm-permission-row">
+          <span class="perm-permission-icon">${item.permIcon}</span>
+          <span class="perm-permission-text" data-testid="perm-permission">${t(item.perm)}</span>
+        </div>
+        <div class="perm-question" style="margin-bottom:14px;">${t(L.allowQuestion)}</div>
+        <div class="perm-buttons">
+          <button class="perm-btn deny"  data-testid="perm-deny-btn">${t(L.denyBtn)}</button>
+          <button class="perm-btn allow" data-testid="perm-allow-btn">${t(L.allowBtn)}</button>
+        </div>
+      </div>`;
+    area.appendChild(win);
+
+    let resolved = false;
+    const denyBtn  = win.querySelector('[data-testid="perm-deny-btn"]');
+    const allowBtn = win.querySelector('[data-testid="perm-allow-btn"]');
+
+    denyBtn.addEventListener('click', () => {
+      if (resolved) return;
+      resolved = true;
+      SoundSynth.playSnap();
+      win.classList.add('correct');
+      const r = localRect(win);
+      spawnBurst(r.cx, r.cy, '#39ff14');
+      setTimeout(onWin, 600);
+    });
+
+    allowBtn.addEventListener('click', () => {
+      if (resolved) return;
+      resolved = true;
+      SoundSynth.playLoseSound();
+      win.classList.add('wrong');
+      setTimeout(onLose, 600);
+    });
+
+    this._area = area;
+  },
+  cleanup() {
+    if (this._area) this._area.classList.remove('perm-mode');
+  }
 });
 
 /* ===== Mini-Game 2: Meme Shield ===== */
@@ -1959,20 +2460,20 @@ MiniGames.push({
     line.className = 'phish-line';
     line.dataset.testid = 'phish-line';
     line.style.height = '240px';
-    line.style.top = '40px';
+    line.style.top = '80px';
     area.appendChild(line);
 
     // Hook curve
     const hook = document.createElement('div');
     hook.className = 'phish-hook';
-    hook.style.top = '280px';
+    hook.style.top = '320px';
     area.appendChild(hook);
 
     // The bait button
     const bait = document.createElement('div');
     bait.className = 'phish-bait';
     bait.dataset.testid = 'phish-bait';
-    bait.style.top = '320px';
+    bait.style.top = '360px';
     bait.innerHTML = `${t(this.bait)}<br><span style="font-size:10px">${t(this.baitSub)}</span>`;
     area.appendChild(bait);
 
@@ -2036,20 +2537,41 @@ MiniGames.push({
 /* ---------------------------------------------------------
    8. GAME FLOW CONTROLLER
    --------------------------------------------------------- */
-function startNewGame() {
+function startNewGame(category) {
+  Game.currentCategory = category || Game.currentCategory || 'citizenship';
+  const cat = Game.currentCategory;
+  Game.history = [];
   Game.lives = 3;
   Game.roundsWon = 0;
   Game.currentTimerSec = 15;
-  Game.miniGameQueue = shuffle(MiniGames.slice());
-  renderLives();
   Screens.hud(true);
+  renderLives();
   document.getElementById('round-label').textContent = `${t('round')} 1`;
+
+  let categoryGames = [];
+  if (cat === 'citizenship') {
+    categoryGames = [MiniGames.find(mg => mg.name === 'fake-news'), MiniGames.find(mg => mg.name === 'meme-shield')];
+  } else if (cat === 'dangers') {
+    categoryGames = [MiniGames.find(mg => mg.name === 'phishing-hook'), MiniGames.find(mg => mg.name === 'inbox-cleaner')];
+  } else if (cat === 'privacy') {
+    categoryGames = [
+      MiniGames.find(mg => mg.name === 'password-puzzle'),
+      MiniGames.find(mg => mg.name === 'app-permissions'),
+    ];
+  }
+
+  let queue = [];
+  while (queue.length < 5) {
+    queue = queue.concat(shuffle([...categoryGames]));
+  }
+  Game.miniGameQueue = queue.slice(0, 5);
+
   nextRound();
 }
 
 function nextRound() {
-  if (Game.lives <= 0) {
-    gameOver();
+  if (Game.history.length >= 5 || Game.lives <= 0) {
+    showReviewScreen();
     return;
   }
   if (Game.miniGameQueue.length === 0) {
@@ -2074,9 +2596,10 @@ function showIntro() {
   oldTut.outerHTML = demoHTML;
   Screens.show('screen-intro');
   Game.acceptInput = false;
-  setTimeout(() => {
+  if (Game.introTimeout) clearTimeout(Game.introTimeout);
+  Game.introTimeout = setTimeout(() => {
     startMiniGame();
-  }, 2000);
+  }, 5000);
 }
 
 function startMiniGame() {
@@ -2104,10 +2627,26 @@ function startMiniGame() {
 }
 
 function showFeedback(won, mg) {
+  Game.history.push({
+    name: t(mg.prompt),
+    won: won,
+    tip: won ? t(mg.tipWin) : t(mg.tipLose)
+  });
   const result = document.getElementById('feedback-result');
   result.textContent = won ? t('youWin') : t('ohNo');
   result.className = 'result ' + (won ? 'win' : 'lose');
   document.getElementById('feedback-tip').textContent = won ? t(mg.tipWin) : t(mg.tipLose);
+  
+  const feedbackImg = document.getElementById('feedback-image');
+  feedbackImg.src = mg.name + '.png';
+  if (mg.name === 'fake-news' || mg.name === 'inbox-cleaner') {
+    feedbackImg.style.width = '240px';
+    feedbackImg.style.marginLeft = '-10px';
+  } else {
+    feedbackImg.style.width = '180px';
+    feedbackImg.style.marginLeft = '0';
+  }
+  feedbackImg.onload = () => feedbackImg.style.display = 'block';
   if (won) {
     SoundSynth.playWinSound();
     Game.roundsWon++;
@@ -2123,6 +2662,32 @@ function showFeedback(won, mg) {
   Screens.show('screen-feedback');
 }
 
+function showReviewScreen() {
+  Timer.stop();
+  Screens.hud(false);
+  const list = document.getElementById('review-list');
+  list.innerHTML = '';
+  const tipBox = document.getElementById('review-tip-box');
+  const tipText = document.getElementById('review-tip-text');
+  tipBox.classList.remove('active');
+  
+  Game.history.forEach(item => {
+    const btn = document.createElement('button');
+    btn.className = 'review-item ' + (item.won ? 'won' : 'lost');
+    btn.textContent = item.name;
+    btn.addEventListener('click', () => {
+      SoundSynth.playClickSound();
+      tipText.textContent = item.tip;
+      document.getElementById('review-tip-sprite').src = item.won ? 'bitty.png' : 'dizzy_bitty.png';
+      tipBox.classList.add('active');
+    });
+    list.appendChild(btn);
+  });
+  
+  Screens.show('screen-review');
+  SoundSynth.playGameOverSound();
+}
+
 function gameOver() {
   Timer.stop();
   Screens.hud(false);
@@ -2134,15 +2699,51 @@ function gameOver() {
 /* ---------------------------------------------------------
    9. INPUT BINDINGS & INITIALIZATION
    --------------------------------------------------------- */
-document.getElementById('btn-play').addEventListener('click', () => {
-  SoundSynth.resume();
-  SoundSynth.init();
+function returnToHome() {
+  if (Game.introTimeout) clearTimeout(Game.introTimeout);
+  Timer.stop();
+  if (Game.activeMiniGame && typeof Game.activeMiniGame.cleanup === 'function') {
+    Game.activeMiniGame.cleanup();
+  }
+  Screens.hud(false);
+  Screens.show('screen-start');
+}
+
+document.getElementById('btn-home').addEventListener('click', () => {
   SoundSynth.playClickSound();
-  startNewGame();
+  returnToHome();
 });
+
+  document.getElementById('btn-play').addEventListener('click', () => {
+    SoundSynth.resume();
+    SoundSynth.init();
+    SoundSynth.playClickSound();
+    Screens.show('screen-categories');
+  });
+
+  document.getElementById('btn-cat-citizenship').addEventListener('click', () => {
+    SoundSynth.playClickSound();
+    startNewGame('citizenship');
+  });
+  document.getElementById('btn-cat-dangers').addEventListener('click', () => {
+    SoundSynth.playClickSound();
+    startNewGame('dangers');
+  });
+  document.getElementById('btn-cat-privacy').addEventListener('click', () => {
+    SoundSynth.playClickSound();
+    startNewGame('privacy');
+  });
 document.getElementById('btn-restart').addEventListener('click', () => {
   SoundSynth.playClickSound();
   startNewGame();
+});
+document.getElementById('btn-review-restart').addEventListener('click', () => {
+  SoundSynth.playClickSound();
+  startNewGame();
+});
+document.getElementById('btn-close-tip').addEventListener('click', () => {
+  SoundSynth.playClickSound();
+  document.getElementById('review-tip-box').classList.remove('active');
 });
 // Manual tip dismissal — game only advances when player clicks NEXT.
 document.getElementById('btn-next').addEventListener('click', () => {
