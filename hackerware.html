@@ -1766,6 +1766,378 @@ body {
   100% { transform: translate(0, 0) scale(1); }
 }
 
+/* ---- Help a Friend ---- */
+.help-instruction {
+  position: absolute;
+  top: 14px; left: 50%; transform: translateX(-50%);
+  font-size: 11px; color: var(--title-1);
+  letter-spacing: 1.5px; text-align: center;
+  max-width: 880px; line-height: 1.4;
+}
+.help-friend-card {
+  position: absolute;
+  top: 56px; left: 50%; transform: translateX(-50%);
+  width: 600px;
+  background: var(--surface);
+  border: 5px solid var(--ink);
+  box-shadow: 6px 6px 0 var(--neon-pink), 6px 6px 0 5px var(--ink);
+  padding: 16px 20px;
+  display: flex; align-items: center; gap: 18px;
+  animation: postSlideIn 0.4s ease-out;
+}
+.help-friend-avatar {
+  width: 70px; height: 70px;
+  background: var(--neon-yellow);
+  border: 4px solid var(--ink);
+  font-size: 44px;
+  text-align: center;
+  line-height: 62px;
+  flex-shrink: 0;
+  box-shadow: 3px 3px 0 var(--ink);
+  animation: helpAvatarShake 1.2s ease-in-out infinite;
+}
+@keyframes helpAvatarShake {
+  0%, 100% { transform: translateY(0) rotate(-3deg); }
+  50%      { transform: translateY(-2px) rotate(3deg); }
+}
+.help-bubble {
+  flex: 1;
+  background: var(--surface-alt);
+  border: 3px solid var(--neon-cyan);
+  padding: 10px 14px;
+  font-family: 'VT323', monospace;
+  font-size: 22px;
+  color: var(--ink);
+  line-height: 1.2;
+  position: relative;
+}
+.help-bubble::before {
+  content: '';
+  position: absolute;
+  left: -14px; top: 24px;
+  width: 0; height: 0;
+  border-top: 8px solid transparent;
+  border-bottom: 8px solid transparent;
+  border-right: 14px solid var(--neon-cyan);
+}
+.help-prompt {
+  position: absolute;
+  top: 200px; left: 50%; transform: translateX(-50%);
+  font-family: 'Press Start 2P', monospace;
+  font-size: 11px;
+  color: var(--neon-pink);
+  letter-spacing: 1.5px;
+  text-align: center;
+}
+.help-options {
+  position: absolute;
+  top: 240px; left: 50%; transform: translateX(-50%);
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+  width: 760px;
+}
+.help-option {
+  background: var(--surface);
+  border: 4px solid var(--ink);
+  padding: 14px 16px;
+  font-family: 'VT323', monospace;
+  font-size: 22px;
+  color: var(--ink);
+  text-align: center;
+  cursor: pointer;
+  box-shadow: 5px 5px 0 var(--neon-cyan);
+  transition: transform 0.1s, box-shadow 0.1s;
+  line-height: 1.2;
+}
+.help-option:hover { transform: translate(-2px,-2px); box-shadow: 7px 7px 0 var(--neon-cyan); }
+.help-option.correct { background: var(--neon-green); animation: urlCorrect 0.5s ease-out forwards; }
+.help-option.wrong   { background: var(--neon-red); color: var(--text-light); animation: urlWrong 0.4s ease-in-out forwards; }
+
+/* ---- Empathy Express ---- */
+.emp-instruction {
+  position: absolute;
+  top: 14px; left: 50%; transform: translateX(-50%);
+  font-size: 11px; color: var(--title-1);
+  letter-spacing: 1.5px; text-align: center;
+  max-width: 880px; line-height: 1.4;
+}
+.emp-post {
+  position: absolute;
+  top: 60px; left: 50%; transform: translateX(-50%);
+  width: 560px;
+  background: var(--surface);
+  border: 5px solid var(--ink);
+  box-shadow: 6px 6px 0 var(--neon-pink), 6px 6px 0 5px var(--ink);
+  animation: postSlideIn 0.4s ease-out;
+}
+.emp-post-header {
+  background: var(--neon-cyan);
+  color: var(--ink);
+  padding: 8px 14px;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 10px;
+  letter-spacing: 1.5px;
+  border-bottom: 4px solid var(--ink);
+  display: flex; align-items: center; gap: 10px;
+}
+.emp-post-avatar {
+  width: 32px; height: 32px;
+  background: var(--neon-yellow);
+  border: 2px solid var(--ink);
+  font-size: 22px; line-height: 28px; text-align: center;
+}
+.emp-post-body {
+  padding: 22px 24px;
+  font-family: 'VT323', monospace;
+  font-size: 24px;
+  color: var(--ink);
+  line-height: 1.3;
+  min-height: 80px;
+  text-align: center;
+}
+.emp-post.drop-hover {
+  background: #ffffe0;
+  box-shadow: 6px 6px 0 var(--neon-green), 6px 6px 0 5px var(--ink);
+}
+.emp-hint {
+  position: absolute;
+  top: 250px; left: 50%; transform: translateX(-50%);
+  font-family: 'Press Start 2P', monospace;
+  font-size: 10px;
+  color: var(--title-1);
+  letter-spacing: 1.5px;
+  text-align: center;
+}
+.emp-sticker {
+  /* Each sticker is position:absolute via .draggable; we set left/top manually */
+  width: 70px; height: 70px;
+  background: var(--surface);
+  border: 4px solid var(--ink);
+  font-size: 44px;
+  line-height: 62px;
+  text-align: center;
+  cursor: grab;
+  box-shadow: 4px 4px 0 var(--neon-pink);
+  transition: transform 0.15s;
+}
+.emp-sticker:hover { transform: translateY(-4px) rotate(-5deg); }
+.emp-sticker.dragging { cursor: grabbing; opacity: 0.9; z-index: 100; }
+.emp-post.correct { animation: permCorrectFlash 0.6s ease-out forwards; }
+.emp-post.wrong   { animation: permWrongShake 0.5s ease-in-out forwards; }
+
+/* ---- Phone Scam ---- */
+.scam-instruction {
+  position: absolute;
+  top: 14px; left: 50%; transform: translateX(-50%);
+  font-size: 11px; color: var(--title-1);
+  letter-spacing: 1.5px; text-align: center;
+  max-width: 880px; line-height: 1.4;
+}
+.scam-phone {
+  position: absolute;
+  top: 60px; left: 50%; transform: translateX(-50%);
+  width: 300px;
+  background: var(--ink);
+  border: 6px solid var(--ink);
+  border-radius: 30px;
+  padding: 24px 18px;
+  box-shadow: 0 0 0 4px var(--neon-cyan), 8px 8px 0 var(--neon-pink);
+}
+.scam-phone-screen {
+  background: linear-gradient(180deg, #1a0a3a, #3a1a5a);
+  border: 3px solid var(--neon-red);
+  padding: 14px 12px;
+  font-family: 'VT323', monospace;
+  color: var(--text-light);
+  text-align: center;
+  position: relative;
+  animation: scamRing 0.4s ease-in-out infinite alternate;
+}
+@keyframes scamRing {
+  from { box-shadow: inset 0 0 0 rgba(255,18,79,0); }
+  to   { box-shadow: inset 0 0 24px rgba(255,18,79,0.5); }
+}
+.scam-incoming {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 9px;
+  color: var(--neon-yellow);
+  letter-spacing: 1.5px;
+  margin-bottom: 6px;
+  animation: scamBlink 0.6s steps(2) infinite;
+}
+@keyframes scamBlink { 50% { opacity: 0.3; } }
+.scam-caller-id {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 12px;
+  color: var(--neon-red);
+  letter-spacing: 1.5px;
+  padding: 8px 0;
+  margin-bottom: 8px;
+  border-top: 2px dashed var(--neon-red);
+  border-bottom: 2px dashed var(--neon-red);
+}
+.scam-icon { font-size: 38px; margin-bottom: 6px; }
+.scam-bubble {
+  position: absolute;
+  top: 110px; right: 50px;
+  width: 240px;
+  background: var(--surface);
+  border: 4px solid var(--neon-red);
+  padding: 12px 14px;
+  font-family: 'VT323', monospace;
+  font-size: 19px;
+  color: var(--ink);
+  line-height: 1.2;
+  box-shadow: 4px 4px 0 var(--ink);
+  animation: scamBubblePop 0.5s ease-out 0.3s both;
+}
+.scam-bubble::before {
+  content: '';
+  position: absolute;
+  left: -16px; top: 30px;
+  width: 0; height: 0;
+  border-top: 10px solid transparent;
+  border-bottom: 10px solid transparent;
+  border-right: 16px solid var(--ink);
+}
+.scam-bubble::after {
+  content: '';
+  position: absolute;
+  left: -10px; top: 32px;
+  width: 0; height: 0;
+  border-top: 8px solid transparent;
+  border-bottom: 8px solid transparent;
+  border-right: 12px solid var(--surface);
+}
+@keyframes scamBubblePop {
+  0%   { opacity: 0; transform: translateX(-20px) scale(0.5); }
+  100% { opacity: 1; transform: translateX(0) scale(1); }
+}
+.scam-bubble.left {
+  right: auto; left: 50px;
+}
+.scam-bubble.left::before {
+  left: auto; right: -16px;
+  border-right: none;
+  border-left: 16px solid var(--ink);
+}
+.scam-bubble.left::after {
+  left: auto; right: -10px;
+  border-right: none;
+  border-left: 12px solid var(--surface);
+}
+.scam-buttons {
+  position: absolute;
+  bottom: 40px; left: 50%; transform: translateX(-50%);
+  display: flex; gap: 22px;
+}
+.scam-btn {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 14px;
+  letter-spacing: 2px;
+  padding: 16px 24px;
+  border: 4px solid var(--ink);
+  cursor: pointer;
+  color: var(--ink);
+  box-shadow: 5px 5px 0 var(--ink);
+  transition: transform 0.08s, box-shadow 0.08s;
+  min-width: 180px;
+}
+.scam-btn:hover { transform: translate(-1px,-1px); box-shadow: 6px 6px 0 var(--ink); }
+.scam-btn:active { transform: translate(3px,3px); box-shadow: 2px 2px 0 var(--ink); }
+.scam-btn.give { background: var(--neon-red); color: var(--text-light); }
+.scam-btn.hang { background: var(--neon-green); color: var(--ink); }
+.scam-phone.correct { animation: permCorrectFlash 0.6s ease-out forwards; }
+.scam-phone.wrong   { animation: permWrongShake 0.5s ease-in-out forwards; }
+
+/* ---- Demos for the 3 new minigames ---- */
+.demo-help .d-avatar {
+  position: absolute; top: 24px; left: 30px;
+  width: 36px; height: 36px;
+  background: var(--neon-yellow); border: 2px solid var(--ink);
+  font-size: 22px; text-align: center; line-height: 32px;
+  animation: helpAvatarShake 1.2s ease-in-out infinite;
+}
+.demo-help .d-bubble {
+  position: absolute; top: 22px; left: 78px;
+  width: 200px;
+  background: var(--surface-alt); border: 2px solid var(--neon-cyan);
+  padding: 4px 8px;
+  font-family: 'VT323', monospace; font-size: 12px; color: var(--ink);
+}
+.demo-help .d-cards {
+  position: absolute; bottom: 16px; left: 50%; transform: translateX(-50%);
+  display: grid; grid-template-columns: 1fr 1fr; gap: 6px; width: 280px;
+}
+.demo-help .d-card {
+  background: var(--surface); border: 2px solid var(--ink);
+  padding: 4px 6px; font-family: 'VT323', monospace; font-size: 11px;
+  color: var(--ink); text-align: center; box-shadow: 2px 2px 0 var(--neon-cyan);
+}
+.demo-help .d-card.good { background: var(--neon-green); animation: dDenyHL 1.4s ease-in-out infinite; }
+.demo-help .demo-cursor { top: 110px; left: 90px; animation: dCursorPerm 1.4s ease-in-out infinite; }
+
+.demo-emp .d-post {
+  position: absolute; top: 18px; left: 50%; transform: translateX(-50%);
+  width: 220px;
+  background: var(--surface); border: 3px solid var(--ink);
+  box-shadow: 3px 3px 0 var(--neon-pink);
+}
+.demo-emp .d-post-h {
+  background: var(--neon-cyan);
+  font-family: 'Press Start 2P', monospace; font-size: 7px;
+  padding: 3px 6px; color: var(--ink);
+  border-bottom: 2px solid var(--ink);
+}
+.demo-emp .d-post-b {
+  padding: 8px;
+  font-family: 'VT323', monospace; font-size: 13px;
+  color: var(--ink); text-align: center;
+}
+.demo-emp .d-stickers {
+  position: absolute; bottom: 14px; left: 50%; transform: translateX(-50%);
+  display: flex; gap: 6px;
+}
+.demo-emp .d-sticker {
+  width: 28px; height: 28px;
+  background: var(--surface); border: 2px solid var(--ink);
+  font-size: 18px; line-height: 24px; text-align: center;
+  box-shadow: 2px 2px 0 var(--neon-pink);
+}
+.demo-emp .d-sticker.right { animation: dEmpFly 2s ease-in-out infinite; }
+@keyframes dEmpFly {
+  0%, 20% { transform: translate(0, 0) scale(1); }
+  50%, 70% { transform: translate(40px, -70px) scale(1.1); }
+  100% { transform: translate(0, 0) scale(1); }
+}
+
+.demo-scam .d-phone {
+  position: absolute; top: 16px; left: 30%;
+  width: 80px; height: 130px;
+  background: var(--ink); border: 3px solid var(--neon-cyan);
+  border-radius: 14px; padding: 6px;
+}
+.demo-scam .d-phone-screen {
+  width: 100%; height: 100%;
+  background: linear-gradient(180deg, #1a0a3a, #3a1a5a);
+  border: 1px solid var(--neon-red);
+  padding: 4px;
+  font-family: 'Press Start 2P', monospace; font-size: 6px;
+  color: var(--neon-red); text-align: center; letter-spacing: 0.5px;
+  animation: scamBlink 0.6s steps(2) infinite;
+}
+.demo-scam .d-phone-icon { font-size: 16px; margin-bottom: 2px; }
+.demo-scam .d-btn-row { position: absolute; bottom: 14px; left: 50%; transform: translateX(-50%); display: flex; gap: 6px; }
+.demo-scam .d-btn {
+  font-family: 'Press Start 2P', monospace; font-size: 7px;
+  border: 2px solid var(--ink); padding: 4px 5px;
+  box-shadow: 2px 2px 0 var(--ink); letter-spacing: 1px;
+}
+.demo-scam .d-btn.give { background: var(--neon-red); color: var(--text-light); }
+.demo-scam .d-btn.hang { background: var(--neon-green); color: var(--ink); animation: dDenyHL 1.4s ease-in-out infinite; }
+.demo-scam .demo-cursor { bottom: 16px; right: 40px; animation: dCookieCursor 1.6s ease-in-out infinite; }
+
 /* ===== Particle FX ===== */
 .fx-particle {
   position: absolute;
@@ -2451,6 +2823,47 @@ function buildDemoHTML(name, lang) {
             <div class="d-cookie-text">${lang === 'es' ? '¿Aceptar cookies?' : 'Accept cookies?'}</div>
             <div class="d-c-btn accept">${lang === 'es' ? 'TODO' : 'ALL'}</div>
             <div class="d-c-btn nec">${lang === 'es' ? 'SOLO NEC.' : 'ONLY NEC.'}</div>
+          </div>
+          <div class="demo-cursor">${CURSOR_SVG}</div>
+        </div>`;
+    case 'help-a-friend':
+      return `
+        <div class="demo demo-help">
+          <div class="d-avatar">😢</div>
+          <div class="d-bubble">"${lang === 'es' ? 'Necesito ayuda...' : 'I need help...'}"</div>
+          <div class="d-cards">
+            <div class="d-card good">${lang === 'es' ? 'Avisa a un adulto' : 'Tell an adult'}</div>
+            <div class="d-card">${lang === 'es' ? 'Insulta de vuelta' : 'Insult back'}</div>
+            <div class="d-card">${lang === 'es' ? 'Comparte chismes' : 'Share gossip'}</div>
+            <div class="d-card">${lang === 'es' ? 'Ignóralo' : 'Ignore it'}</div>
+          </div>
+          <div class="demo-cursor">${CURSOR_SVG}</div>
+        </div>`;
+    case 'empathy-express':
+      return `
+        <div class="demo demo-emp">
+          <div class="d-post">
+            <div class="d-post-h">@${lang === 'es' ? 'amigo' : 'friend'}</div>
+            <div class="d-post-b">"${lang === 'es' ? 'Estoy muy triste 😢' : 'Feeling so sad 😢'}"</div>
+          </div>
+          <div class="d-stickers">
+            <div class="d-sticker">🤣</div>
+            <div class="d-sticker right">❤️</div>
+            <div class="d-sticker">😡</div>
+          </div>
+        </div>`;
+    case 'phone-scam':
+      return `
+        <div class="demo demo-scam">
+          <div class="d-phone">
+            <div class="d-phone-screen">
+              <div class="d-phone-icon">🏦</div>
+              ${lang === 'es' ? 'BANCO!!' : 'BANK!!'}
+            </div>
+          </div>
+          <div class="d-btn-row">
+            <div class="d-btn give">${lang === 'es' ? 'DAR' : 'GIVE'}</div>
+            <div class="d-btn hang">${lang === 'es' ? 'COLGAR' : 'HANG UP'}</div>
           </div>
           <div class="demo-cursor">${CURSOR_SVG}</div>
         </div>`;
@@ -3285,6 +3698,416 @@ MiniGames.push({
   cleanup() {}
 });
 
+/* ===== Mini-Game: Help a Friend (CITIZENSHIP) =====
+   A friend messages you about an online problem. Pick the right
+   way to support them. 4 options: 2 good + 2 bad. Click good = win,
+   click bad = lose.
+*/
+MiniGames.push({
+  name: 'help-a-friend',
+  topic:  { en: 'CYBER-SUPPORT NETWORK', es: 'RED DE APOYO DIGITAL' },
+  prompt: { en: 'HELP YOUR FRIEND!', es: '¡AYUDA A TU AMIGO!' },
+  tipWin: {
+    en: 'When a friend is in trouble online, help them tell a trusted adult and report or block the bullies. Never join the meanness!',
+    es: 'Si un amigo tiene un problema online, ayúdale a contárselo a un adulto y a reportar o bloquear a los acosadores. ¡Nunca te sumes a la maldad!'
+  },
+  tipLose: {
+    en: 'That advice would have hurt your friend more! Real friends help by listening, blocking the bullies, and bringing in adults — never by attacking back.',
+    es: '¡Ese consejo habría lastimado más a tu amigo! Los buenos amigos ayudan escuchando, bloqueando a los acosadores e involucrando adultos — nunca atacando.'
+  },
+  desc: {
+    en: 'A friend tells you about a problem. Pick a good way to help them — never a mean one!',
+    es: 'Un amigo te cuenta un problema. ¡Elige una forma buena de ayudar — nunca una mala!'
+  },
+  instr: {
+    en: 'YOUR FRIEND NEEDS HELP. PICK THE BEST ADVICE!',
+    es: 'TU AMIGO NECESITA AYUDA. ¡ELIGE EL MEJOR CONSEJO!'
+  },
+  pool: [
+    {
+      avatar: '😢',
+      problem: { en: 'They said mean things to me in the game chat...',
+                 es: 'Me dijeron cosas feas en el chat del juego...' },
+      good: [
+        { en: 'Tell a trusted adult',          es: 'Cuéntale a un adulto de confianza' },
+        { en: 'Block and report them',         es: 'Bloquéalo y repórtalo' },
+      ],
+      bad:  [
+        { en: 'Insult them back, harder',      es: 'Devuélvele el insulto, más fuerte' },
+        { en: 'Share their messages with everyone', es: 'Comparte sus mensajes con todos' },
+      ],
+    },
+    {
+      avatar: '😞',
+      problem: { en: 'They posted an embarrassing photo of me online...',
+                 es: 'Publicaron una foto vergonzosa mía...' },
+      good: [
+        { en: 'Report the post to the app',    es: 'Reporta el post a la app' },
+        { en: 'Ask your parents to help',      es: 'Pide ayuda a tus papás' },
+      ],
+      bad:  [
+        { en: 'Post an embarrassing photo of them', es: 'Publica una foto vergonzosa de ellos' },
+        { en: 'Laugh and say it does not matter', es: 'Ríete y di que no importa' },
+      ],
+    },
+    {
+      avatar: '😨',
+      problem: { en: 'A stranger keeps sending me weird messages...',
+                 es: 'Un desconocido me sigue mandando mensajes raros...' },
+      good: [
+        { en: 'Block them right now',          es: 'Bloquéalo ahora mismo' },
+        { en: 'Save screenshots, show an adult', es: 'Guarda capturas, muéstrasele a un adulto' },
+      ],
+      bad:  [
+        { en: 'Reply and see what they want',  es: 'Respóndele a ver qué quiere' },
+        { en: 'Send them your number to know them', es: 'Mándale tu número para conocerlo' },
+      ],
+    },
+    {
+      avatar: '😟',
+      problem: { en: 'Someone made a FAKE profile pretending to be me!',
+                 es: '¡Alguien creó un perfil FALSO haciéndose pasar por mí!' },
+      good: [
+        { en: 'Report the fake profile',       es: 'Reporta el perfil falso' },
+        { en: 'Tell a teacher or adult',       es: 'Avísale a un profe o adulto' },
+      ],
+      bad:  [
+        { en: 'Make a fake profile of them too', es: 'Crea un perfil falso de ellos también' },
+        { en: 'Ignore it, it is not important', es: 'Ignóralo, no es importante' },
+      ],
+    },
+    {
+      avatar: '🥺',
+      problem: { en: 'A group of kids suddenly stopped talking to me...',
+                 es: 'Un grupo de niños dejó de hablarme de la nada...' },
+      good: [
+        { en: 'Talk to a trusted adult',       es: 'Habla con un adulto de confianza' },
+        { en: 'Find friends who value you',    es: 'Busca amigos que te valoren' },
+      ],
+      bad:  [
+        { en: 'Insult them online behind their back', es: 'Insúltalos por la espalda online' },
+        { en: 'Cry alone and tell nobody',     es: 'Llora solo y no le digas a nadie' },
+      ],
+    },
+  ],
+  mount(area, onWin, onLose) {
+    const item = pick(this.pool);
+
+    const instr = document.createElement('div');
+    instr.className = 'help-instruction';
+    instr.textContent = t(this.instr);
+    area.appendChild(instr);
+
+    const card = document.createElement('div');
+    card.className = 'help-friend-card';
+    card.innerHTML = `
+      <div class="help-friend-avatar">${item.avatar}</div>
+      <div class="help-bubble" data-testid="help-bubble">"${t(item.problem)}"</div>`;
+    area.appendChild(card);
+
+    const prompt = document.createElement('div');
+    prompt.className = 'help-prompt';
+    prompt.textContent = Game.lang === 'es' ? '¿QUÉ LE ACONSEJAS?' : 'WHAT DO YOU ADVISE?';
+    area.appendChild(prompt);
+
+    // Build options: 2 good + 2 bad, shuffled
+    const opts = shuffle([
+      { text: item.good[0], isGood: true  },
+      { text: item.good[1], isGood: true  },
+      { text: item.bad[0],  isGood: false },
+      { text: item.bad[1],  isGood: false },
+    ]);
+
+    const grid = document.createElement('div');
+    grid.className = 'help-options';
+    area.appendChild(grid);
+
+    let resolved = false;
+    opts.forEach((opt, idx) => {
+      const card = document.createElement('div');
+      card.className = 'help-option';
+      card.dataset.testid = opt.isGood ? `help-good-${idx}` : `help-bad-${idx}`;
+      card.textContent = t(opt.text);
+      grid.appendChild(card);
+      card.addEventListener('click', () => {
+        if (resolved) return;
+        resolved = true;
+        if (opt.isGood) {
+          card.classList.add('correct');
+          SoundSynth.playSnap();
+          const r = localRect(card);
+          spawnBurst(r.cx, r.cy, '#39ff14');
+          setTimeout(onWin, 600);
+        } else {
+          card.classList.add('wrong');
+          SoundSynth.playLoseSound();
+          setTimeout(onLose, 600);
+        }
+      });
+    });
+  },
+  cleanup() {}
+});
+
+/* ===== Mini-Game: Empathy Express (CITIZENSHIP) =====
+   Friend's post with an emotion (sad/scared/happy). Drag the
+   right empathy emoji onto the post. Drop wrong emoji = lose.
+*/
+MiniGames.push({
+  name: 'empathy-express',
+  topic:  { en: 'ONLINE EMPATHY', es: 'EMPATÍA EN LÍNEA' },
+  prompt: { en: 'PICK THE RIGHT REACTION!', es: '¡ELIGE LA REACCIÓN CORRECTA!' },
+  tipWin: {
+    en: 'When a friend posts something sad, react with kindness — never with laughter or anger. Your empathy makes their day better!',
+    es: 'Si un amigo postea algo triste, reacciona con cariño — nunca con risas ni enojo. ¡Tu empatía les alegra el día!'
+  },
+  tipLose: {
+    en: 'That reaction hurt your friend! Mocking or angry emojis on sad posts is a form of bullying. Always think about how YOU would feel.',
+    es: '¡Esa reacción lastimó a tu amigo! Burlarse o reaccionar con enojo a posts tristes es una forma de bullying. Piensa cómo TE sentirías tú.'
+  },
+  desc: {
+    en: 'Drag the kind emoji that matches your friend\'s feelings onto their post!',
+    es: '¡Arrastra el emoji amable que coincida con lo que siente tu amigo!'
+  },
+  instr: {
+    en: 'DRAG THE RIGHT EMOJI ONTO THE POST. BE KIND!',
+    es: 'ARRASTRA EL EMOJI CORRECTO AL POST. ¡SÉ AMABLE!'
+  },
+  pool: [
+    { avatar: '😢',
+      post:  { en: 'My puppy passed away today...',  es: 'Hoy se murió mi perrito...' },
+      good:  ['❤️', '🫂'],  // hugs / love
+      bad:   ['🤣', '😡', '🎉', '🤡'],
+    },
+    { avatar: '🎉',
+      post:  { en: 'I got a 10 on my exam! 🎊',     es: '¡Saqué un 10 en mi examen! 🎊' },
+      good:  ['🎉', '👏'],
+      bad:   ['😢', '😡', '🤡', '🙄'],
+    },
+    { avatar: '😨',
+      post:  { en: 'I have my school play tomorrow and I am SO scared...',
+               es: 'Mañana es mi obra del cole y me da MUCHO miedo...' },
+      good:  ['💪', '🫂'],
+      bad:   ['🤣', '🙄', '😡', '🤡'],
+    },
+    { avatar: '🤒',
+      post:  { en: 'Stuck in bed sick all weekend 😷', es: 'Enfermo en cama todo el finde 😷' },
+      good:  ['❤️', '🌻'],
+      bad:   ['🤣', '😡', '🎉', '🙄'],
+    },
+    { avatar: '😞',
+      post:  { en: 'Kids said mean things to me at school today...',
+               es: 'Hoy unos niños me dijeron cosas feas en el cole...' },
+      good:  ['❤️', '💪'],
+      bad:   ['🤣', '😡', '🤡', '🎉'],
+    },
+    { avatar: '🥺',
+      post:  { en: 'My grandma is in the hospital. Sending her love...',
+               es: 'Mi abuela está en el hospital. Le mando cariño...' },
+      good:  ['❤️', '🌻'],
+      bad:   ['🤣', '🙄', '😡', '🤡'],
+    },
+  ],
+  mount(area, onWin, onLose) {
+    const item = pick(this.pool);
+
+    const instr = document.createElement('div');
+    instr.className = 'emp-instruction';
+    instr.textContent = t(this.instr);
+    area.appendChild(instr);
+
+    const post = document.createElement('div');
+    post.className = 'emp-post';
+    post.dataset.testid = 'emp-post';
+    post.innerHTML = `
+      <div class="emp-post-header">
+        <div class="emp-post-avatar">${item.avatar}</div>
+        <div>${Game.lang === 'es' ? '@amigo_a · POST' : '@friend · POST'}</div>
+      </div>
+      <div class="emp-post-body">"${t(item.post)}"</div>`;
+    area.appendChild(post);
+
+    const hint = document.createElement('div');
+    hint.className = 'emp-hint';
+    hint.textContent = Game.lang === 'es' ? '↓ ARRASTRA UN EMOJI ARRIBA ↑' : '↓ DRAG AN EMOJI UP ↑';
+    area.appendChild(hint);
+
+    // Build 1 good + 3 bad stickers (shuffled). Reduce visual clutter.
+    const goodSticker = pick(item.good);
+    const badStickers = shuffle(item.bad).slice(0, 3);
+    const allStickers = shuffle([
+      { emoji: goodSticker, isGood: true },
+      ...badStickers.map(e => ({ emoji: e, isGood: false })),
+    ]);
+
+    // Position each sticker manually since .draggable forces position:absolute.
+    // Lay them out evenly along the bottom row of the game area (~460px top).
+    const count = allStickers.length;
+    const gap = 22;
+    const stickerW = 70;
+    const totalW = count * stickerW + (count - 1) * gap;
+    const startX = (960 - totalW) / 2;
+    const homeTop = 450;
+
+    let resolved = false;
+    allStickers.forEach((s, idx) => {
+      const el = document.createElement('div');
+      el.className = 'emp-sticker draggable';
+      el.dataset.testid = s.isGood ? `emp-good-${idx}` : `emp-bad-${idx}`;
+      el.textContent = s.emoji;
+      const homeLeft = startX + idx * (stickerW + gap);
+      el.style.left = homeLeft + 'px';
+      el.style.top  = homeTop + 'px';
+      area.appendChild(el);
+
+      makeDraggable(el, {
+        disabled: () => resolved,
+        onDrag: () => {
+          const pR = localRect(post);
+          const eR = localRect(el);
+          post.classList.toggle('drop-hover', overlaps(eR, pR));
+        },
+        onRelease: () => {
+          if (resolved) return;
+          post.classList.remove('drop-hover');
+          const pR = localRect(post);
+          const eR = localRect(el);
+          if (!overlaps(eR, pR)) {
+            // Released outside the post — snap back to home position
+            el.style.transition = 'left 0.25s, top 0.25s';
+            el.style.left = homeLeft + 'px';
+            el.style.top  = homeTop + 'px';
+            setTimeout(() => { el.style.transition = ''; }, 260);
+            return;
+          }
+          resolved = true;
+          if (s.isGood) {
+            post.classList.add('correct');
+            SoundSynth.playSnap();
+            spawnBurst(pR.cx, pR.cy, '#39ff14');
+            setTimeout(onWin, 600);
+          } else {
+            post.classList.add('wrong');
+            SoundSynth.playLoseSound();
+            setTimeout(onLose, 600);
+          }
+        }
+      });
+    });
+  },
+  cleanup() {}
+});
+
+/* ===== Mini-Game: Phone Scam (DANGERS) =====
+   Phone rings, scammer pretends to be bank/microsoft/relative
+   and asks for sensitive info. Always HANG UP to win.
+*/
+MiniGames.push({
+  name: 'phone-scam',
+  topic:  { en: 'PHONE SCAM ALERT', es: 'ALERTA DE ESTAFA TELEFÓNICA' },
+  prompt: { en: 'WHO IS CALLING?', es: '¿QUIÉN LLAMA?' },
+  tipWin: {
+    en: 'Banks and Microsoft NEVER call asking for your PIN, password, or remote access. If someone asks, hang up and tell an adult.',
+    es: 'Los bancos y Microsoft NUNCA llaman pidiéndote tu PIN, contraseña o acceso remoto. Si alguien lo pide, cuelga y avísale a un adulto.'
+  },
+  tipLose: {
+    en: 'You just gave away your data! Real banks never call asking for PINs. Always HANG UP and check by calling the official number yourself.',
+    es: '¡Acabas de dar tus datos! Los bancos reales nunca llaman pidiendo PINs. Siempre CUELGA y verifica llamando tú al número oficial.'
+  },
+  desc: {
+    en: 'A "bank" or "tech support" calls asking for your private info. Hang up — they are scammers!',
+    es: 'Un "banco" o "soporte técnico" llama pidiéndote info privada. ¡Cuelga — son estafadores!'
+  },
+  instr: {
+    en: 'NEVER GIVE PRIVATE INFO OVER THE PHONE. HANG UP!',
+    es: 'NUNCA DES INFO PRIVADA POR TELÉFONO. ¡CUELGA!'
+  },
+  // All items are TRAPS — always pick HANG UP to win.
+  pool: [
+    { icon: '🏦',
+      caller:  { en: 'XYZ BANK - URGENT', es: 'BANCO XYZ - URGENTE' },
+      message: { en: 'Hi! I am from your bank. Quick, give me your PIN to "protect" your account!',
+                 es: '¡Hola! Soy de tu banco. ¡Rápido, dame tu PIN para "proteger" tu cuenta!' } },
+    { icon: '💻',
+      caller:  { en: 'MICROSOFT SUPPORT', es: 'SOPORTE MICROSOFT' },
+      message: { en: 'Your computer has a virus! Let me access it remotely to "fix" it.',
+                 es: '¡Tu computadora tiene un virus! Déjame accederla remotamente para "arreglarla".' } },
+    { icon: '🎁',
+      caller:  { en: 'YOU WON $1000!', es: '¡GANASTE $1000!' },
+      message: { en: 'Congratulations! Just give me your card number to send the prize money.',
+                 es: '¡Felicidades! Solo dame tu número de tarjeta para mandarte el premio.' } },
+    { icon: '👮',
+      caller:  { en: 'POLICE STATION', es: 'COMISARÍA' },
+      message: { en: 'Officer here. Tell me your parents\' passwords or there will be trouble.',
+                 es: 'Soy oficial. Dame las contraseñas de tus papás o habrá problemas.' } },
+    { icon: '👤',
+      caller:  { en: 'UNKNOWN COUSIN?', es: '¿PRIMO DESCONOCIDO?' },
+      message: { en: 'Hi cousin! I forgot my TikTok password. Send me yours so I can copy it!',
+                 es: '¡Hola primo! Olvidé mi contraseña de TikTok. ¡Mándame la tuya para copiarla!' } },
+    { icon: '📧',
+      caller:  { en: 'IT DEPT - SCHOOL', es: 'DEPTO TI - ESCUELA' },
+      message: { en: 'School IT here. Give me your email password to "update" your account.',
+                 es: 'Soy del depto de TI del cole. Dame tu contraseña del correo para "actualizar".' } },
+  ],
+  labels: {
+    incoming:    { en: 'INCOMING CALL', es: 'LLAMADA ENTRANTE' },
+    giveBtn:     { en: 'GIVE INFO',     es: 'DAR DATOS'        },
+    hangBtn:     { en: 'HANG UP',       es: 'COLGAR'           },
+  },
+  mount(area, onWin, onLose) {
+    const item = pick(this.pool);
+    const L = this.labels;
+
+    const instr = document.createElement('div');
+    instr.className = 'scam-instruction';
+    instr.textContent = t(this.instr);
+    area.appendChild(instr);
+
+    const phone = document.createElement('div');
+    phone.className = 'scam-phone';
+    phone.dataset.testid = 'scam-phone';
+    phone.innerHTML = `
+      <div class="scam-phone-screen">
+        <div class="scam-incoming">${t(L.incoming)}</div>
+        <div class="scam-icon">${item.icon}</div>
+        <div class="scam-caller-id" data-testid="scam-caller">${t(item.caller)}</div>
+        <div style="font-family:'Press Start 2P'; font-size:8px; color:var(--neon-cyan); letter-spacing:1px;">
+          📞 RING RING...
+        </div>
+      </div>`;
+    area.appendChild(phone);
+
+    const bubble = document.createElement('div');
+    bubble.className = 'scam-bubble';
+    bubble.innerHTML = `"${t(item.message)}"`;
+    area.appendChild(bubble);
+
+    const buttons = document.createElement('div');
+    buttons.className = 'scam-buttons';
+    buttons.innerHTML = `
+      <button class="scam-btn hang" data-testid="scam-hang-btn">${t(L.hangBtn)}</button>
+      <button class="scam-btn give" data-testid="scam-give-btn">${t(L.giveBtn)}</button>`;
+    area.appendChild(buttons);
+
+    let resolved = false;
+    buttons.querySelector('[data-testid="scam-hang-btn"]').addEventListener('click', () => {
+      if (resolved) return; resolved = true;
+      SoundSynth.playSnap();
+      phone.classList.add('correct');
+      const r = localRect(phone);
+      spawnBurst(r.cx, r.cy, '#39ff14');
+      setTimeout(onWin, 600);
+    });
+    buttons.querySelector('[data-testid="scam-give-btn"]').addEventListener('click', () => {
+      if (resolved) return; resolved = true;
+      SoundSynth.playLoseSound();
+      phone.classList.add('wrong');
+      setTimeout(onLose, 600);
+    });
+  },
+  cleanup() {}
+});
+
 /* ===== Mini-Game 2: Meme Shield ===== */
 MiniGames.push({
   name: 'meme-shield',
@@ -3832,6 +4655,8 @@ function startNewGame(category) {
       MiniGames.find(mg => mg.name === 'fake-news'),
       MiniGames.find(mg => mg.name === 'meme-shield'),
       MiniGames.find(mg => mg.name === 'think-before-post'),
+      MiniGames.find(mg => mg.name === 'help-a-friend'),
+      MiniGames.find(mg => mg.name === 'empathy-express'),
     ];
   } else if (cat === 'dangers') {
     categoryGames = [
@@ -3839,6 +4664,7 @@ function startNewGame(category) {
       MiniGames.find(mg => mg.name === 'inbox-cleaner'),
       MiniGames.find(mg => mg.name === 'url-detective'),
       MiniGames.find(mg => mg.name === 'download-warning'),
+      MiniGames.find(mg => mg.name === 'phone-scam'),
     ];
   } else if (cat === 'privacy') {
     categoryGames = [
