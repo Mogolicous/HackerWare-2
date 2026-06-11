@@ -513,9 +513,9 @@ body {
 
 /* ===== Feedback Screen ===== */
 #screen-feedback .result {
-  font-size: 48px;
+  font-size: 40px;
   letter-spacing: 4px;
-  margin-bottom: 24px;
+  margin-bottom: 12px;
   text-shadow: 4px 4px 0 var(--title-3);
 }
 #screen-feedback .result.win  { color: #18a040; }
@@ -523,7 +523,7 @@ body {
 #screen-feedback .tip-card {
   background: var(--surface);
   border: 4px solid var(--neon-cyan);
-  padding: 24px 32px;
+  padding: 16px 24px;
   max-width: 720px;
   position: relative;
   box-shadow: 6px 6px 0 var(--neon-pink);
@@ -954,7 +954,10 @@ body {
 
   <!-- HUD -->
   <div id="hud" class="hidden">
-    <div id="lives" data-testid="lives-display"></div>
+    <div style="display: flex; align-items: center; gap: 16px;">
+      <button id="btn-home" class="pixel-btn red" style="padding: 4px 8px; font-size: 14px; min-height: 0; min-width: 0; pointer-events: auto;" data-i18n="homeBtn">HOME</button>
+      <div id="lives" data-testid="lives-display"></div>
+    </div>
     <div id="timer-wrap">
       <div id="timer-label" data-i18n="time">TIME</div>
       <div id="timer-bar-bg"><div id="timer-bar" data-testid="timer-bar"></div></div>
@@ -980,6 +983,20 @@ body {
       Quick! Beat each 5-game challenge to learn how to stay safe online.<br>
       Use your mouse to click and drag. Good luck, cyber-hero!
     </div>
+  </div>
+
+  <!-- Categories Screen -->
+  <div id="screen-categories" class="screen" data-testid="screen-categories">
+    <h1 style="font-size: 36px; margin-bottom: 40px; text-shadow: 3px 3px 0 var(--title-2); color: var(--neon-cyan);" data-i18n="chooseCategory">CHOOSE CATEGORY</h1>
+    
+    <div style="display: flex; gap: 20px; flex-wrap: wrap; justify-content: center; max-width: 800px; margin-bottom: 40px;">
+      <button class="pixel-btn" id="btn-cat-citizenship" data-i18n="catCitizenship" style="min-width: 250px; background: #6366f1; border-color: #4338ca; box-shadow: 6px 6px 0 #3730a3; min-height: 80px; font-size: 20px;">DIGITAL CITIZENSHIP</button>
+      <button class="pixel-btn" id="btn-cat-dangers" data-i18n="catDangers" style="min-width: 250px; background: #ef4444; border-color: #dc2626; box-shadow: 6px 6px 0 #b91c1c; min-height: 80px; font-size: 20px;">NETWORK DANGERS</button>
+      <button class="pixel-btn" id="btn-cat-privacy" data-i18n="catPrivacy" style="min-width: 250px; background: #10b981; border-color: #059669; box-shadow: 6px 6px 0 #047857; min-height: 80px; font-size: 20px;">PRIVACY & SECURITY</button>
+    </div>
+    
+    <!-- Placeholder for user image -->
+    <img id="category-mascot" src="" style="width: 250px; height: auto; min-height: 200px; object-fit: contain; display: none;" alt="Category Mascot">
   </div>
 
   <!-- Intro Screen (mini-game prompt) -->
@@ -1196,6 +1213,8 @@ const Game = {
   miniGameQueue: [],
   activeMiniGame: null,
   acceptInput: false,
+  introTimeout: null,
+  currentCategory: null,
   history: [],
 };
 
@@ -1222,6 +1241,8 @@ const I18N = {
     playAgain:   'PLAY AGAIN',
     reviewResults: 'REVIEW RESULTS',
     clickGameTip: 'CLICK A GAME TO VIEW TIP',
+    homeBtn:      'HOME',
+    chooseCategory: 'CHOOSE CATEGORY',
   },
   es: {
     subtitle:    'MICRO-JUEGOS DE CIBER-SEGURIDAD',
@@ -1240,6 +1261,11 @@ const I18N = {
     playAgain:   'JUGAR DE NUEVO',
     reviewResults: 'RESULTADOS',
     clickGameTip: 'HAZ CLIC PARA VER EL CONSEJO',
+    homeBtn:      'INICIO',
+    chooseCategory: 'ELIGE UNA CATEGORÍA',
+    catCitizenship: 'CIUDADANÍA DIGITAL',
+    catDangers: 'PELIGROS EN LA RED',
+    catPrivacy: 'PROTECCIÓN Y PRIVACIDAD',
   }
 };
 
@@ -2141,15 +2167,32 @@ MiniGames.push({
 /* ---------------------------------------------------------
    8. GAME FLOW CONTROLLER
    --------------------------------------------------------- */
-function startNewGame() {
+function startNewGame(category) {
+  Game.currentCategory = category || Game.currentCategory || 'citizenship';
+  const cat = Game.currentCategory;
   Game.history = [];
   Game.lives = 3;
   Game.roundsWon = 0;
   Game.currentTimerSec = 15;
-  Game.miniGameQueue = shuffle(MiniGames.slice());
-  renderLives();
   Screens.hud(true);
+  renderLives();
   document.getElementById('round-label').textContent = `${t('round')} 1`;
+
+  let categoryGames = [];
+  if (cat === 'citizenship') {
+    categoryGames = [MiniGames.find(mg => mg.name === 'fake-news'), MiniGames.find(mg => mg.name === 'meme-shield')];
+  } else if (cat === 'dangers') {
+    categoryGames = [MiniGames.find(mg => mg.name === 'phishing-hook'), MiniGames.find(mg => mg.name === 'inbox-cleaner')];
+  } else if (cat === 'privacy') {
+    categoryGames = [MiniGames.find(mg => mg.name === 'password-puzzle')];
+  }
+
+  let queue = [];
+  while (queue.length < 5) {
+    queue = queue.concat(shuffle([...categoryGames]));
+  }
+  Game.miniGameQueue = queue.slice(0, 5);
+
   nextRound();
 }
 
@@ -2180,7 +2223,8 @@ function showIntro() {
   oldTut.outerHTML = demoHTML;
   Screens.show('screen-intro');
   Game.acceptInput = false;
-  setTimeout(() => {
+  if (Game.introTimeout) clearTimeout(Game.introTimeout);
+  Game.introTimeout = setTimeout(() => {
     startMiniGame();
   }, 5000);
 }
@@ -2223,14 +2267,13 @@ function showFeedback(won, mg) {
   const feedbackImg = document.getElementById('feedback-image');
   feedbackImg.src = mg.name + '.png';
   if (mg.name === 'fake-news' || mg.name === 'inbox-cleaner') {
-    feedbackImg.style.width = '450px';
-    feedbackImg.style.marginLeft = '-40px';
+    feedbackImg.style.width = '240px';
+    feedbackImg.style.marginLeft = '-10px';
   } else {
-    feedbackImg.style.width = '250px';
+    feedbackImg.style.width = '180px';
     feedbackImg.style.marginLeft = '0';
   }
   feedbackImg.onload = () => feedbackImg.style.display = 'block';
-  feedbackImg.onerror = () => feedbackImg.style.display = 'none';
   if (won) {
     SoundSynth.playWinSound();
     Game.roundsWon++;
@@ -2283,12 +2326,40 @@ function gameOver() {
 /* ---------------------------------------------------------
    9. INPUT BINDINGS & INITIALIZATION
    --------------------------------------------------------- */
-document.getElementById('btn-play').addEventListener('click', () => {
-  SoundSynth.resume();
-  SoundSynth.init();
+function returnToHome() {
+  if (Game.introTimeout) clearTimeout(Game.introTimeout);
+  Timer.stop();
+  if (Game.activeMiniGame && typeof Game.activeMiniGame.cleanup === 'function') {
+    Game.activeMiniGame.cleanup();
+  }
+  Screens.hud(false);
+  Screens.show('screen-start');
+}
+
+document.getElementById('btn-home').addEventListener('click', () => {
   SoundSynth.playClickSound();
-  startNewGame();
+  returnToHome();
 });
+
+  document.getElementById('btn-play').addEventListener('click', () => {
+    SoundSynth.resume();
+    SoundSynth.init();
+    SoundSynth.playClickSound();
+    Screens.show('screen-categories');
+  });
+
+  document.getElementById('btn-cat-citizenship').addEventListener('click', () => {
+    SoundSynth.playClickSound();
+    startNewGame('citizenship');
+  });
+  document.getElementById('btn-cat-dangers').addEventListener('click', () => {
+    SoundSynth.playClickSound();
+    startNewGame('dangers');
+  });
+  document.getElementById('btn-cat-privacy').addEventListener('click', () => {
+    SoundSynth.playClickSound();
+    startNewGame('privacy');
+  });
 document.getElementById('btn-restart').addEventListener('click', () => {
   SoundSynth.playClickSound();
   startNewGame();
